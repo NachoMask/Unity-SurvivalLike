@@ -1,15 +1,22 @@
 using UnityEngine;
+using UnityEngine.Pool;
 
 [RequireComponent(
     typeof(SpriteRenderer),
     typeof(Rigidbody2D))]
 public class EnemyCharacter : MonoBehaviour
 {
+    private IObjectPool<EnemyCharacter> ownerPool;
+
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D body;
 
-    [SerializeField] private Rigidbody2D target;
-    [SerializeField] private float moveSpeed = 1f;
+    private Rigidbody2D moveTarget;
+
+    private int currentHp;
+    private float moveSpeed;
+
+    private bool isSpawned = false;
 
     private void Awake()
     {
@@ -17,17 +24,53 @@ public class EnemyCharacter : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
     }
 
+    public void Init(IObjectPool<EnemyCharacter> pool)
+    {
+        ownerPool = pool;
+    }
+
+    public void Spawn(EnemyData data, Rigidbody2D target, Vector2 position)
+    {
+        isSpawned = true;
+
+        transform.position = position;
+
+        currentHp = data.MaxHp;
+        moveSpeed = data.MoveSpeed;
+        moveTarget = target;
+
+        gameObject.SetActive(true);
+    }
+
     private void FixedUpdate()
     {
         Vector2 nextPosition =
-            Vector2.MoveTowards(body.position, target.position, moveSpeed * Time.fixedDeltaTime);
+            Vector2.MoveTowards(body.position, moveTarget.position, moveSpeed * Time.fixedDeltaTime);
 
         body.MovePosition(nextPosition);
     }
 
     private void LateUpdate()
     {
-        if (target.position.x != body.position.x)
-            spriteRenderer.flipX = target.position.x > body.position.x;
+        if (moveTarget.position.x != body.position.x)
+            spriteRenderer.flipX = moveTarget.position.x > body.position.x;
+    }
+
+    private void Die()
+    {
+        if (!isSpawned) return;
+
+        isSpawned = false;
+        ownerPool.Release(this);
+    }
+
+    public void ResetForPool()
+    {
+        isSpawned = false;
+
+        moveTarget = null;
+        body.linearVelocity = Vector2.zero;
+
+        gameObject.SetActive(false);
     }
 }
