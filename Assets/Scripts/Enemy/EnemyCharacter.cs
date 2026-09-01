@@ -56,6 +56,21 @@ public class EnemyCharacter : MonoBehaviour
             spriteRenderer.flipX = moveTarget.position.x > body.position.x;
     }
 
+    public void TakeDamage(int damage)
+    {
+        if (damage <= 0)
+        {
+            throw new System.ArgumentOutOfRangeException(nameof(damage));
+        }
+
+        currentHp = Mathf.Max(0, currentHp - damage);
+
+        if (currentHp == 0)
+        {
+            Die();
+        }
+    }
+
     private void Die()
     {
         if (!isSpawned) return;
