@@ -17,6 +17,7 @@ public class EnemyCharacter : MonoBehaviour
     private float moveSpeed;
 
     private bool isSpawned = false;
+    private bool isInKnockback = false;
 
     private void Awake()
     {
@@ -44,6 +45,12 @@ public class EnemyCharacter : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isInKnockback)
+        {
+            isInKnockback = false;
+            return;
+        }
+
         Vector2 nextPosition =
             Vector2.MoveTowards(body.position, moveTarget.position, moveSpeed * Time.fixedDeltaTime);
 
@@ -71,6 +78,19 @@ public class EnemyCharacter : MonoBehaviour
         }
     }
 
+    public void ApplyKnockback(Vector2 direction, int knockbackForce)
+    {
+        if (knockbackForce < 0)
+        {
+            throw new System.ArgumentOutOfRangeException(nameof(knockbackForce));
+        }
+        if (knockbackForce == 0 || direction == Vector2.zero) return;
+
+        isInKnockback = true;
+        body.linearVelocity = Vector2.zero;
+        body.AddForce(direction.normalized * knockbackForce, ForceMode2D.Impulse);
+    }
+
     private void Die()
     {
         if (!isSpawned) return;
@@ -82,6 +102,7 @@ public class EnemyCharacter : MonoBehaviour
     public void ResetForPool()
     {
         isSpawned = false;
+        isInKnockback = false;
 
         moveTarget = null;
         body.linearVelocity = Vector2.zero;
