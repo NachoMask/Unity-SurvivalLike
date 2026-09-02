@@ -51,5 +51,6 @@ MonoBehaviour:
   projectileCount: 1
   orbitAngularSpeed: 180
   attackRange: 1
+  knockbackForce: 5
   activeDuration: 4
   rehitInterval: 1

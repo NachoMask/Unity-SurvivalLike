@@ -14,6 +14,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumProjectileCount)] private int projectileCount;
     [SerializeField, Min(PlayerAttack.MinimumProjectileSpeed)] private float orbitAngularSpeed;
     [SerializeField, Min(PlayerAttack.MinimumAttackRange)] private float attackRange;
+    [SerializeField, Min(PlayerAttack.MinimumKnockbackForce)] private int knockbackForce;
     [SerializeField, Min(PlayerAttack.MinimumActiveDuration)] private float activeDuration;
     [SerializeField, Min(PlayerAttack.MinimumRehitInterval)] private float rehitInterval;
 
@@ -29,7 +30,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
     {
         if (!TryValidateSettings(out string error))
         {
-            Debug.LogError($"{nameof(PlayerOrbitingAttack)}: {error}", this);
+            Debug.LogError($"{nameof(PlayerOrbitingAttack)} {name}: {error}", this);
             enabled = false;
             return;
         }
@@ -167,7 +168,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
         PlayerAttack projectile = Instantiate(projectilePrefab, transform);
 
         projectile.gameObject.SetActive(false);
-        projectile.Init(damage, rehitInterval);
+        projectile.InitRehit(damage, knockbackForce, rehitInterval);
 
         projectiles.Add(projectile);
     }
@@ -176,45 +177,50 @@ public class PlayerOrbitingAttack : MonoBehaviour
     {
         if (projectilePrefab == null)
         {
-            error = "ProjectilePrefab is invalid";
+            error = $"{nameof(projectilePrefab)} is invalid";
             return false;
         }
 
         if (projectileCount < PlayerAttack.MinimumProjectileCount || projectileCount > PlayerAttack.MaximumProjectileCount)
         {
-            error = $"Current Projectile Count must be between " + 
+            error = $"{nameof(projectileCount)} must be between " +
                     $"{PlayerAttack.MinimumProjectileCount} and {PlayerAttack.MaximumProjectileCount}";
             return false;
         }
 
         if (damage < PlayerAttack.MinimumDamage)
         {
-            error = $"Damage must be at least {PlayerAttack.MinimumDamage}";
+            error = $"{nameof(damage)} must be at least {PlayerAttack.MinimumDamage}";
             return false;
         }
         if (cooldownDuration < PlayerAttack.MinimumCooldownDuration)
         {
-            error = $"CooldownDuration must be at least {PlayerAttack.MinimumCooldownDuration}";
+            error = $"{nameof(cooldownDuration)} must be at least {PlayerAttack.MinimumCooldownDuration}";
             return false;
         }
         if (attackRange < PlayerAttack.MinimumAttackRange)
         {
-            error = $"AttackRange must be at least {PlayerAttack.MinimumAttackRange}";
+            error = $"{nameof(attackRange)} must be at least {PlayerAttack.MinimumAttackRange}";
+            return false;
+        }
+        if (knockbackForce < PlayerAttack.MinimumKnockbackForce)
+        {
+            error = $"{nameof(knockbackForce)} must be at least {PlayerAttack.MinimumKnockbackForce}";
             return false;
         }
         if (activeDuration < PlayerAttack.MinimumActiveDuration)
         {
-            error = $"ActiveDuration must be at least {PlayerAttack.MinimumActiveDuration}";
+            error = $"{nameof(activeDuration)} must be at least {PlayerAttack.MinimumActiveDuration}";
             return false;
         }
         if (rehitInterval < PlayerAttack.MinimumRehitInterval)
         {
-            error = $"RehitInterval must be at least {PlayerAttack.MinimumRehitInterval}";
+            error = $"{nameof(rehitInterval)} must be at least {PlayerAttack.MinimumRehitInterval}";
             return false;
         }
         if (orbitAngularSpeed < PlayerAttack.MinimumProjectileSpeed)
         {
-            error = $"orbitAngularSpeed must be at least {PlayerAttack.MinimumProjectileSpeed}";
+            error = $"{nameof(orbitAngularSpeed)} must be at least {PlayerAttack.MinimumProjectileSpeed}";
             return false;
         }
 
