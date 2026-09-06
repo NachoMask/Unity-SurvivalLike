@@ -6,8 +6,10 @@ public class EnemyData : ScriptableObject
     [SerializeField] private EnemyCharacter prefab;
     [SerializeField, Min(1)] private int maxHp = 1;
     [SerializeField, Min(0f)] private float moveSpeed = 1f;
+    [SerializeField, Min(0)] private int exp = 0;
 
     public EnemyCharacter Prefab => prefab;
     public int MaxHp => maxHp;
     public float MoveSpeed => moveSpeed;
+    public int Exp => exp;
 }
