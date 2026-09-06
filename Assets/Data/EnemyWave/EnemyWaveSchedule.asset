@@ -14,12 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waves:
   - startTime: 1
-    spawnInterval: 0.5
+    spawnInterval: 0.2
     entries:
-    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
-      count: 10
+    - enemyData: {fileID: 11400000, guid: bdb8a4dd40d2e4a4db7000d2b0eb42a8, type: 2}
+      count: 40
   - startTime: 10
     spawnInterval: 0.1
     entries:
     - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
       count: 50
+  - startTime: 20
+    spawnInterval: 0.1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 5adf8f39d7d0ccf4caa9ca18fcc83aa2, type: 2}
+      count: 60
+  - startTime: 30
+    spawnInterval: 0.1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 0321ed352d355574e9bddcc2ca2ec325, type: 2}
+      count: 100
+  - startTime: 40
+    spawnInterval: 0.1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 6c5196b6e9fc68c46ad80be6da1b226c, type: 2}
+      count: 80
+  - startTime: 50
+    spawnInterval: 0.1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 0260c61e91e44dc48a492c2ae9e392f1, type: 2}
+      count: 40
+    - enemyData: {fileID: 11400000, guid: 5adf8f39d7d0ccf4caa9ca18fcc83aa2, type: 2}
+      count: 40
+    - enemyData: {fileID: 11400000, guid: 6c5196b6e9fc68c46ad80be6da1b226c, type: 2}
+      count: 40
+    - enemyData: {fileID: 11400000, guid: 0321ed352d355574e9bddcc2ca2ec325, type: 2}
+      count: 40
+    - enemyData: {fileID: 11400000, guid: bdb8a4dd40d2e4a4db7000d2b0eb42a8, type: 2}
+      count: 40
+    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
+      count: 40

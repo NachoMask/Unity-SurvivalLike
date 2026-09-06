@@ -12,7 +12,7 @@ public class PlayerStats : MonoBehaviour
     public event Action<int> LevelChanged;
     public event Action<float, float> ExpChanged;
     public event Action<int> KillCountChanged;
-    public event Action<int, int> HpChanged;
+    public event Action<float, float> HpChanged;
 
     private int level = 1;
     private float currentExp = 0f;
@@ -39,7 +39,7 @@ public class PlayerStats : MonoBehaviour
     public float MaxExp => maxExp;
     public int KillCount => killCount;
 
-    public int MaxHp => Mathf.Max(MinimumMaxHp, maxHpBase + maxHpBonus);
+    public float MaxHp => Mathf.Max(MinimumMaxHp, maxHpBase + maxHpBonus);
     public int RecoveryAmount => recoveryAmount;
     public int Defense => defense;
     public int ProjectileCountBonus => projectileCountBonus;
@@ -51,21 +51,21 @@ public class PlayerStats : MonoBehaviour
     public float CooldownMultiplier => Mathf.Max(0.1f, 1f - cooldownReductionBonus);
     public float ExpMultiplier => (1f + expBonus);
 
-    public int CurrentHp { get; private set; }
+    public float CurrentHp { get; private set; }
 
     private void Awake()
     {
         CurrentHp = MaxHp;
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         if (damage <= 0)
         {
             throw new System.ArgumentOutOfRangeException(nameof(damage));
         }
 
-        int finalDamage = Mathf.Max(1, damage - Defense);
+        float finalDamage = Mathf.Max(1f, damage - Defense);
 
         SetCurrentHp(CurrentHp - finalDamage);
     }
@@ -110,17 +110,17 @@ public class PlayerStats : MonoBehaviour
     {
         if (value == 0) return;
 
-        int prevMaxHp = MaxHp;
+        float prevMaxHp = MaxHp;
 
         maxHpBonus += value;
-        CurrentHp = Mathf.RoundToInt(CurrentHp * ((float)MaxHp / prevMaxHp));
+        CurrentHp = Mathf.RoundToInt(CurrentHp * (MaxHp / prevMaxHp));
 
         HpChanged?.Invoke(CurrentHp, MaxHp);
     }
 
-    private void SetCurrentHp(int newCurrentHp)
+    private void SetCurrentHp(float newCurrentHp)
     {
-        int prevCurrentHp = CurrentHp;
+        float prevCurrentHp = CurrentHp;
 
         if (newCurrentHp == prevCurrentHp) return;
 
