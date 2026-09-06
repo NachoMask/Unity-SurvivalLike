@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -17,6 +18,15 @@ public class PlayerRangedAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumKnockbackForce)] private int knockbackForce;
     [SerializeField, Min(PlayerAttack.MinimumPenetrationCount)] private int penetrationCount;
 
+    private int damageBonus;
+    private float cooldownReduction;
+    private int projectileCountBonus;
+    private float fireIntervalBonus;
+    private float projectileSpeedMultiplier;
+    private float projectileSizeMultiplierBonus;
+    private int knockbackForceBonus;
+    private int penetrationCountBonus;
+
     private PlayerStats playerStats;
     private PlayerTargetScanner targetScanner;
 
@@ -30,20 +40,41 @@ public class PlayerRangedAttack : MonoBehaviour
 
     public int FinalDamage => Mathf.Max(
         PlayerAttack.MinimumDamage,
-        Mathf.RoundToInt(damage * playerStats.AttackMultiplier));
+        Mathf.RoundToInt((damage + damageBonus)* playerStats.AttackMultiplier));
     public float FinalCooldown => Mathf.Max(
         PlayerAttack.MinimumCooldownDuration,
-        cooldownDuration * playerStats.CooldownMultiplier);
+        (cooldownDuration - cooldownReduction) * playerStats.CooldownMultiplier);
     public int FinalProjectileCount => Mathf.Clamp(
-        projectileCount + playerStats.ProjectileCountBonus,
+        projectileCount + projectileCountBonus + playerStats.ProjectileCountBonus,
         PlayerAttack.MinimumProjectileCount,
         PlayerAttack.MaximumProjectileCount);
     public float FinalProjectileSpeed => Mathf.Max(
         PlayerAttack.MinimumProjectileSpeed,
-        projectileSpeed * playerStats.ProjectileSpeedMultiplier);
+        projectileSpeed * (projectileSpeedMultiplier + playerStats.ProjectileSpeedMultiplier));
     public float FinalProjectileSizeMultiplier => Mathf.Max(
         PlayerAttack.MinimumAttackRange,
-        projectileSizeMultiplier * playerStats.AttackRangeMultiplier);
+        projectileSizeMultiplier * (projectileSizeMultiplierBonus + playerStats.AttackRangeMultiplier));
+    public int FinalPenetrationCount => Mathf.Max(
+        PlayerAttack.MinimumPenetrationCount,
+        penetrationCount + penetrationCountBonus);
+
+    [Serializable]
+    private struct UpgradeLevel
+    {
+        [Min(0)] public int damageBonus;
+        [Min(0f)] public float cooldownReduction;
+        [Min(0)] public int projectileCountBonus;
+        [Min(0f)] public float fireIntervalBonus;
+        [Min(0f)] public float projectileSpeedMultiplier;
+        [Min(0f)] public float projectileSizeMultiplierBonus;
+        [Min(0)] public int knockbackForceBonus;
+        [Min(0)] public int penetrationCountBonus;
+    }
+
+    [Header("Upgrade")]
+    [SerializeField] private UpgradeLevel[] upgradeLevels;
+
+    private int level = 1;
 
     private void Awake()
     {
@@ -103,6 +134,8 @@ public class PlayerRangedAttack : MonoBehaviour
 
     private void OnEnable()
     {
+        playerStats.LevelChanged += BindUpgrade;
+
         StartCoroutine(FireProjectiles());
     }
 
@@ -153,6 +186,31 @@ public class PlayerRangedAttack : MonoBehaviour
         PlayerAttack projectile = pool.Get();
         projectile.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
         projectile.GetComponent<Rigidbody2D>().linearVelocity = direction * FinalProjectileSpeed;
+    }
+
+    public void BindUpgrade(int level)
+    {
+        TryUpgrade();
+    }
+
+    public bool TryUpgrade()
+    {
+        if (level >= upgradeLevels.Length) return false;
+
+        UpgradeLevel upgrade = upgradeLevels[level];
+
+        damageBonus += upgrade.damageBonus;
+        cooldownReduction += upgrade.cooldownReduction;
+        projectileCountBonus += upgrade.projectileCountBonus;
+        fireIntervalBonus += upgrade.fireIntervalBonus;
+        projectileSpeedMultiplier += upgrade.projectileSpeedMultiplier;
+        projectileSizeMultiplierBonus += upgrade.projectileSizeMultiplierBonus;
+        knockbackForceBonus += upgrade.knockbackForceBonus;
+        penetrationCountBonus += upgrade.penetrationCountBonus;
+
+        ++level;
+        Debug.Log($"{name} is now LV.{level}.");
+        return true;
     }
 
     private bool TryValidateSettings(out string error)

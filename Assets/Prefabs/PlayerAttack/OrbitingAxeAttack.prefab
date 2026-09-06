@@ -54,3 +54,68 @@ MonoBehaviour:
   knockbackForce: 5
   activeDuration: 4
   rehitInterval: 1
+  upgradeLevels:
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0.3
+    attackRangeMultiplier: 0.25
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
+  - damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0.5
+    rehitIntervalBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0.3
+    attackRangeMultiplier: 0.25
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
+  - damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0.5
+    rehitIntervalBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalBonus: 0
