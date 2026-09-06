@@ -8,6 +8,8 @@ public class PlayerOrbitingAttack : MonoBehaviour
     [SerializeField] private PlayerAttack projectilePrefab;
     [SerializeField] private float projectileRotationOffset;
 
+    private PlayerStats playerStats;
+
     [Header("Attack Stat")]
     [SerializeField, Min(PlayerAttack.MinimumDamage)] private int damage;
     [SerializeField, Min(PlayerAttack.MinimumCooldownDuration)] private float cooldownDuration;
@@ -19,15 +21,35 @@ public class PlayerOrbitingAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumRehitInterval)] private float rehitInterval;
 
     private readonly List<PlayerAttack> projectiles = new();
-
-    private WaitForSeconds activeWait;
-    private WaitForSeconds cooldownWait;
+    private int activeProjectileCount;
 
     private bool isAttacking = false;
     private float orbitAngle;
 
+    public int FinalDamage => Mathf.Max(
+        PlayerAttack.MinimumDamage,
+        Mathf.RoundToInt(damage * playerStats.AttackMultiplier));
+    public float FinalCooldown => Mathf.Max(
+        PlayerAttack.MinimumCooldownDuration,
+        cooldownDuration * playerStats.CooldownMultiplier);
+    public int FinalProjectileCount => Mathf.Clamp(
+        projectileCount + playerStats.ProjectileCountBonus,
+        PlayerAttack.MinimumProjectileCount,
+        PlayerAttack.MaximumProjectileCount);
+    public float FinalOrbitAngularSpeed => Mathf.Max(
+        PlayerAttack.MinimumProjectileSpeed,
+        orbitAngularSpeed * playerStats.ProjectileSpeedMultiplier);
+    public float FinalAttackRange => Mathf.Max(
+        PlayerAttack.MinimumAttackRange,
+        attackRange * playerStats.AttackRangeMultiplier);
+    public float FinalActiveDuration => Mathf.Max(
+        PlayerAttack.MinimumActiveDuration,
+        activeDuration * playerStats.ActiveDurationMultiplier);
+
     private void Awake()
     {
+        playerStats = GetComponentInParent<PlayerStats>();
+
         if (!TryValidateSettings(out string error))
         {
             Debug.LogError($"{nameof(PlayerOrbitingAttack)} {name}: {error}", this);
@@ -35,17 +57,17 @@ public class PlayerOrbitingAttack : MonoBehaviour
             return;
         }
 
-        activeWait = new WaitForSeconds(activeDuration);
-        cooldownWait = new WaitForSeconds(cooldownDuration);
-
-        InitProjectiles();
+        EnsureProjectileCapacity(FinalProjectileCount);
     }
 
-    private void InitProjectiles()
+    private void EnsureProjectileCapacity(int requireCount)
     {
-        while (projectiles.Count < projectileCount)
+        while (projectiles.Count < requireCount)
         {
-            CreateProjectile();
+            PlayerAttack projectile = Instantiate(projectilePrefab, transform);
+
+            projectile.gameObject.SetActive(false);
+            projectiles.Add(projectile);
         }
     }
 
@@ -59,7 +81,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
         StopAllCoroutines();
         isAttacking = false;
 
-        HideProjectiles();
+        EndAttack();
     }
 
     private void FixedUpdate()
@@ -67,7 +89,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
         if (!isAttacking) return;
 
         orbitAngle = Mathf.Repeat(
-            orbitAngle - orbitAngularSpeed * Time.fixedDeltaTime,
+            orbitAngle - FinalOrbitAngularSpeed * Time.fixedDeltaTime,
             360f);
 
         PlaceProjectiles();
@@ -78,18 +100,10 @@ public class PlayerOrbitingAttack : MonoBehaviour
         while (true)
         {
             BeginAttack();
-            yield return activeWait;
+            yield return new WaitForSeconds(FinalActiveDuration);
 
             EndAttack();
-            yield return cooldownWait;
-        }
-    }
-
-    private void HideProjectiles()
-    {
-        foreach (var projectile in projectiles)
-        {
-            projectile.gameObject.SetActive(false);
+            yield return new WaitForSeconds(FinalCooldown);
         }
     }
 
@@ -98,32 +112,36 @@ public class PlayerOrbitingAttack : MonoBehaviour
         orbitAngle = 0f;
         isAttacking = true;
 
-        RefreshProjectiles();
+        activeProjectileCount = FinalProjectileCount;
+        EnsureProjectileCapacity(activeProjectileCount);
+
+        for (int i = 0; i < activeProjectileCount; ++i)
+        {
+            PlayerAttack projectile = projectiles[i];
+
+            projectile.InitRehit(FinalDamage, knockbackForce, rehitInterval);
+
+            projectile.gameObject.SetActive(true);
+        }
+
+        PlaceProjectiles();
     }
 
     private void EndAttack()
     {
         isAttacking = false;
 
-        HideProjectiles();
-    }
-
-    private void RefreshProjectiles()
-    {
-        for (int i = 0; i < projectiles.Count; ++i)
+        for (int i = 0; i < activeProjectileCount; ++i)
         {
-            bool activate = isAttacking && i < projectileCount;
-            projectiles[i].gameObject.SetActive(activate);
+            projectiles[i].gameObject.SetActive(false);
         }
-
-        PlaceProjectiles();
     }
 
     private void PlaceProjectiles()
     {
-        float angleInterval = 360f / projectileCount;
+        float angleInterval = 360f / activeProjectileCount;
 
-        for (int i = 0; i < projectileCount; ++i)
+        for (int i = 0; i < activeProjectileCount; ++i)
         {
             float projectileAngle = orbitAngle + angleInterval * i;
 
@@ -142,35 +160,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
 
         projectileTransform.localPosition = new Vector2(
             Mathf.Cos(radians),
-            Mathf.Sin(radians)) * attackRange;
-    }
-
-    public void SetProjectileCount(int count)
-    {
-        int clampedCount = Mathf.Clamp(
-            count,
-            PlayerAttack.MinimumProjectileCount,
-            PlayerAttack.MaximumProjectileCount);
-
-        while (projectiles.Count < clampedCount)
-        {
-            CreateProjectile();
-        }
-
-        if (projectileCount == clampedCount) return;
-
-        projectileCount = clampedCount;
-        RefreshProjectiles();
-    }
-
-    private void CreateProjectile()
-    {
-        PlayerAttack projectile = Instantiate(projectilePrefab, transform);
-
-        projectile.gameObject.SetActive(false);
-        projectile.InitRehit(damage, knockbackForce, rehitInterval);
-
-        projectiles.Add(projectile);
+            Mathf.Sin(radians)) * FinalAttackRange;
     }
 
     private bool TryValidateSettings(out string error)
@@ -221,6 +211,12 @@ public class PlayerOrbitingAttack : MonoBehaviour
         if (orbitAngularSpeed < PlayerAttack.MinimumProjectileSpeed)
         {
             error = $"{nameof(orbitAngularSpeed)} must be at least {PlayerAttack.MinimumProjectileSpeed}";
+            return false;
+        }
+
+        if (playerStats == null)
+        {
+            error = $"{nameof(playerStats)} was not found in parents";
             return false;
         }
 
