@@ -4,13 +4,16 @@ using UnityEngine;
     typeof(SpriteRenderer),
     typeof(Rigidbody2D),
     typeof(Animator))]
+[RequireComponent(
+    typeof(PlayerStats))]
 public class PlayerCharacter : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D body;
     private Animator animator;
+    private PlayerStats playerStats;
 
-    [SerializeField] private float moveSpeed = 5f;
+    private float MoveSpeed => playerStats.MoveSpeed;
     private Vector2 moveDirection;
 
     public Vector2 LastMoveDirection { get; private set; } = Vector2.right;
@@ -23,11 +26,12 @@ public class PlayerCharacter : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         body = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        playerStats = GetComponent<PlayerStats>();
     }
 
     private void FixedUpdate()
     {
-        Vector2 nextPosition = body.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
+        Vector2 nextPosition = body.position + moveDirection * MoveSpeed * Time.fixedDeltaTime;
 
         body.MovePosition(nextPosition);
     }
