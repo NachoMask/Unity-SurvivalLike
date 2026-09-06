@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(
     typeof(SpriteRenderer),
@@ -29,6 +30,16 @@ public class PlayerCharacter : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
     }
 
+    private void OnEnable()
+    {
+        playerStats.Died += RestartGame;
+    }
+
+    private void OnDisable()
+    {
+        playerStats.Died -= RestartGame;
+    }
+
     private void FixedUpdate()
     {
         Vector2 nextPosition = body.position + moveDirection * MoveSpeed * Time.fixedDeltaTime;
@@ -48,5 +59,13 @@ public class PlayerCharacter : MonoBehaviour
             if (direction.x != 0f)
                 spriteRenderer.flipX = direction.x < 0f;
         }
+    }
+
+    private void RestartGame()
+    {
+        Time.timeScale = 1f;
+
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.buildIndex);
     }
 }

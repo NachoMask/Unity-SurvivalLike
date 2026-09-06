@@ -19422,6 +19422,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: OrbitingAxeAttack
       objectReference: {fileID: 0}
+    - target: {fileID: 3101434571649670118, guid: 5f5f095e61f71e84a8c329345230a277, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3782134578264517641, guid: 5f5f095e61f71e84a8c329345230a277, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -19930,6 +19934,10 @@ PrefabInstance:
     - target: {fileID: 4442432542123392054, guid: 7b8413eeaac705843a34ef919351ac02, type: 3}
       propertyPath: m_Name
       value: RangedArrowAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 4442432542123392054, guid: 7b8413eeaac705843a34ef919351ac02, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

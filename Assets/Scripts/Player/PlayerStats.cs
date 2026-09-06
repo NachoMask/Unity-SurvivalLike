@@ -13,6 +13,7 @@ public class PlayerStats : MonoBehaviour
     public event Action<float, float> ExpChanged;
     public event Action<int> KillCountChanged;
     public event Action<float, float> HpChanged;
+    public event Action Died;
 
     private int level = 1;
     private float currentExp = 0f;
@@ -126,6 +127,9 @@ public class PlayerStats : MonoBehaviour
 
         CurrentHp = Mathf.Clamp(newCurrentHp, MinimumCurrentHp, MaxHp);
         HpChanged?.Invoke(CurrentHp, MaxHp);
+
+        if (prevCurrentHp > 0f && CurrentHp <= 0f)
+            Died.Invoke();
     }
 
     private void AddRecoveryAmount(int value)
