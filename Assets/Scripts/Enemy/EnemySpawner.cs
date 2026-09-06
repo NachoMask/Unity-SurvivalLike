@@ -8,6 +8,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private Rigidbody2D enemyTarget;
     [SerializeField] private EnemyWaveSchedule waveSchedule;
 
+    [SerializeField] private GameTimer gameTimer;
+    [SerializeField] private PlayerStats playerStats;
+
     private readonly Dictionary<EnemyData, ObjectPool<EnemyCharacter>> pools = new();
     [SerializeField, Min(0)] private int defaultCapacity = 10;
     [SerializeField, Min(1)] private int maxPoolSize = 20;
@@ -30,7 +33,6 @@ public class EnemySpawner : MonoBehaviour
 
     private readonly List<ActiveWaveState> activeWaves = new();
 
-    private float elapsedTime;
     private int nextWaveIndex;
 
     private void Awake()
@@ -80,7 +82,7 @@ public class EnemySpawner : MonoBehaviour
     private EnemyCharacter CreateEnemy(IObjectPool<EnemyCharacter> ownerPool, EnemyData data)
     {
         EnemyCharacter enemy = Instantiate(data.Prefab, transform);
-        enemy.Init(ownerPool);
+        enemy.Init(ownerPool, OnEnemyDefeated);
         enemy.gameObject.SetActive(false);
 
         return enemy;
@@ -97,13 +99,17 @@ public class EnemySpawner : MonoBehaviour
         Destroy(enemy.gameObject);
     }
 
+    private void OnEnemyDefeated(int exp)
+    {
+        playerStats.AddExp(exp);
+        playerStats.AddKillCount();
+    }
+
     private void Update()
     {
         float deltaTime = Time.deltaTime;
 
         if (deltaTime <= 0f) return;
-
-        elapsedTime += deltaTime;
 
         StartReadyWaves();
         UpdateActiveWaves(deltaTime);
@@ -114,7 +120,7 @@ public class EnemySpawner : MonoBehaviour
         EnemyWave[] waves = waveSchedule.Waves;
 
         while (nextWaveIndex < waves.Length &&
-            elapsedTime >= waves[nextWaveIndex].StartTime)
+            gameTimer.ElapsedTime >= waves[nextWaveIndex].StartTime)
         {
             ActiveWaveState state = new ActiveWaveState(waves[nextWaveIndex]);
             activeWaves.Add(state);
@@ -215,6 +221,17 @@ public class EnemySpawner : MonoBehaviour
             return false;
         }
 
+        if (gameTimer == null)
+        {
+            error = $"{nameof(gameTimer)} is Invalid";
+            return false;
+        }
+        if (playerStats == null)
+        {
+            error = $"{nameof(playerStats)} is Invalid";
+            return false;
+        }
+
         for (int i = 0; i < waveSchedule.Waves.Length; ++i)
         {
             EnemyWave wave = waveSchedule.Waves[i];
@@ -265,6 +282,12 @@ public class EnemySpawner : MonoBehaviour
                 if (enemyData.MoveSpeed < 0f)
                 {
                     error = $"{nameof(EnemyWave)} [{i}]'s {nameof(EnemySpawnEntry)} [{j}]'s {nameof(EnemyData.MoveSpeed)} Invalid";
+                    return false;
+                }
+
+                if (enemyData.Exp < 0)
+                {
+                    error = $"{nameof(EnemyWave)} [{i}]'s {nameof(EnemySpawnEntry)} [{j}]'s {nameof(EnemyData.Exp)} Exp must be at least 0";
                     return false;
                 }
             }
