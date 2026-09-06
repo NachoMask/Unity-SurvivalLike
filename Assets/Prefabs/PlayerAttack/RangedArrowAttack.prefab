@@ -55,3 +55,68 @@ MonoBehaviour:
   penetrationCount: 1
   defaultCapacity: 10
   maxPoolSize: 20
+  upgradeLevels:
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0.2
+    projectileCountBonus: 0
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 1
+  - damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalBonus: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
