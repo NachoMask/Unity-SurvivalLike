@@ -6,10 +6,12 @@ public class EnemyData : ScriptableObject
     [SerializeField] private EnemyCharacter prefab;
     [SerializeField, Min(1)] private int maxHp = 1;
     [SerializeField, Min(0f)] private float moveSpeed = 0f;
+    [SerializeField, Min(0)] private int exp = 0;
 
     public EnemyCharacter Prefab => prefab;
     public int MaxHp => maxHp;
     public float MoveSpeed => moveSpeed;
+    public int Exp => exp;
 
     public bool TryValidateSettings(out string error)
     {
@@ -26,6 +28,11 @@ public class EnemyData : ScriptableObject
         if (moveSpeed < 0f)
         {
             error = $"{nameof(moveSpeed)} must be at least 0.0";
+            return false;
+        }
+        if (exp < 0)
+        {
+            error = $"{nameof(exp)} must be at least 0";
             return false;
         }
 

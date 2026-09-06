@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -8,6 +9,7 @@ using UnityEngine.Pool;
 public class EnemyCharacter : MonoBehaviour
 {
     private IObjectPool<EnemyCharacter> ownerPool;
+    private Action<int> onDefeated;
 
     private SpriteRenderer spriteRenderer;
     private Rigidbody2D body;
@@ -17,6 +19,7 @@ public class EnemyCharacter : MonoBehaviour
 
     private int currentHp;
     private float moveSpeed;
+    private int expReward;
 
     private bool isSpawned = false;
     private bool isInKnockback = false;
@@ -48,9 +51,19 @@ public class EnemyCharacter : MonoBehaviour
         hitFlashWait = new WaitForSeconds(HitFlashTime);
     }
 
-    public void Init(IObjectPool<EnemyCharacter> pool)
+    public void Init(IObjectPool<EnemyCharacter> pool, Action<int> onDefeated)
     {
+        if (pool == null)
+        {
+            throw new ArgumentNullException(nameof(pool));
+        }
+        if (onDefeated == null)
+        {
+            throw new ArgumentNullException(nameof(onDefeated));
+        }
+
         ownerPool = pool;
+        this.onDefeated = onDefeated;
     }
 
     public void Spawn(EnemyData data, Rigidbody2D target, Vector2 position)
@@ -63,6 +76,7 @@ public class EnemyCharacter : MonoBehaviour
 
         currentHp = data.MaxHp;
         moveSpeed = data.MoveSpeed;
+        expReward = data.Exp;
         moveTarget = target;
 
         materialPropertyBlock.SetFloat(HitFlashFactorId, 0f);
@@ -153,6 +167,8 @@ public class EnemyCharacter : MonoBehaviour
         isSpawned = false;
         enemyCollider.enabled = false;
         body.simulated = false;
+
+        onDefeated.Invoke(expReward);
 
         StartCoroutine(DieEffect());
     }
