@@ -4678,7 +4678,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   repositionSize: {x: 20, y: 20}
-  repositionRandomRange: 0
 --- !u!1 &268839290
 GameObject:
   m_ObjectHideFlags: 0
@@ -9956,7 +9955,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   repositionSize: {x: 20, y: 20}
-  repositionRandomRange: 0
 --- !u!1 &810438249
 GameObject:
   m_ObjectHideFlags: 0
@@ -14915,7 +14913,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   repositionSize: {x: 20, y: 20}
-  repositionRandomRange: 0
 --- !u!1 &1192409682
 GameObject:
   m_ObjectHideFlags: 0
@@ -19338,7 +19335,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   repositionSize: {x: 20, y: 20}
-  repositionRandomRange: 0
 --- !u!1 &1276486830
 GameObject:
   m_ObjectHideFlags: 0

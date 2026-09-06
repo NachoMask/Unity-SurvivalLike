@@ -21,6 +21,7 @@ public class EnemyCharacter : MonoBehaviour
     private int currentHp;
     private float moveSpeed;
     private int expReward;
+    private float contactDamage;
 
     private bool isSpawned = false;
     private bool isInKnockback = false;
@@ -83,6 +84,7 @@ public class EnemyCharacter : MonoBehaviour
         currentHp = data.MaxHp;
         moveSpeed = data.MoveSpeed;
         expReward = data.Exp;
+        contactDamage = data.ContactDamage;
         moveTarget = target;
 
         materialPropertyBlock.SetFloat(HitFlashFactorId, 0f);
@@ -114,6 +116,13 @@ public class EnemyCharacter : MonoBehaviour
 
         if (moveTarget.position.x != body.position.x)
             spriteRenderer.flipX = moveTarget.position.x > body.position.x;
+    }
+
+    private void OnTriggerStay2D(Collider2D collider)
+    {
+        if (!collider.TryGetComponent(out PlayerStats player)) return;
+
+        player.TakeDamage(contactDamage);
     }
 
     public void TakeDamage(int damage)
