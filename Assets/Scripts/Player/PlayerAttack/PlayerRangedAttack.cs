@@ -17,10 +17,10 @@ public class PlayerRangedAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumKnockbackForce)] private int knockbackForce;
     [SerializeField, Min(PlayerAttack.MinimumPenetrationCount)] private int penetrationCount;
 
+    private PlayerStats playerStats;
     private PlayerTargetScanner targetScanner;
 
     private WaitForSeconds fireWait;
-    private WaitForSeconds cooldownWait;
 
     private ObjectPool<PlayerAttack> pool;
 
@@ -28,8 +28,26 @@ public class PlayerRangedAttack : MonoBehaviour
     [SerializeField, Min(0)] private int defaultCapacity = 10;
     [SerializeField, Min(1)] private int maxPoolSize = 20;
 
+    public int FinalDamage => Mathf.Max(
+        PlayerAttack.MinimumDamage,
+        Mathf.RoundToInt(damage * playerStats.AttackMultiplier));
+    public float FinalCooldown => Mathf.Max(
+        PlayerAttack.MinimumCooldownDuration,
+        cooldownDuration * playerStats.CooldownMultiplier);
+    public int FinalProjectileCount => Mathf.Clamp(
+        projectileCount + playerStats.ProjectileCountBonus,
+        PlayerAttack.MinimumProjectileCount,
+        PlayerAttack.MaximumProjectileCount);
+    public float FinalProjectileSpeed => Mathf.Max(
+        PlayerAttack.MinimumProjectileSpeed,
+        projectileSpeed * playerStats.ProjectileSpeedMultiplier);
+    public float FinalProjectileSizeMultiplier => Mathf.Max(
+        PlayerAttack.MinimumAttackRange,
+        projectileSizeMultiplier * playerStats.AttackRangeMultiplier);
+
     private void Awake()
     {
+        playerStats = GetComponentInParent<PlayerStats>();
         targetScanner = GetComponentInParent<PlayerTargetScanner>();
 
         if (!TryValidateSettings(out string error))
@@ -40,7 +58,6 @@ public class PlayerRangedAttack : MonoBehaviour
         }
 
         fireWait = new WaitForSeconds(fireInterval);
-        cooldownWait = new WaitForSeconds(cooldownDuration);
 
         CreatePool();
     }
@@ -57,19 +74,19 @@ public class PlayerRangedAttack : MonoBehaviour
 
     private PlayerAttack CreateProjectile()
     {
-        PlayerAttack projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
+        PlayerAttack projectile = Instantiate(projectilePrefab, playerStats.transform);
 
         return projectile;
     }
 
     private void OnProjectileTake(PlayerAttack projectile)
     {
-        projectile.InitPenetration(pool, damage, knockbackForce, penetrationCount);
+        projectile.InitPenetration(pool, FinalDamage, knockbackForce, penetrationCount);
 
         projectile.transform.SetParent(null);
         projectile.transform.position = transform.position;
         projectile.transform.localScale =
-            projectilePrefab.transform.localScale * projectileSizeMultiplier;
+            projectilePrefab.transform.localScale * FinalProjectileSizeMultiplier;
 
         projectile.gameObject.SetActive(true);
     }
@@ -98,7 +115,8 @@ public class PlayerRangedAttack : MonoBehaviour
     {
         while (true)
         {
-            int currentProjectileCount = projectileCount;
+            int currentProjectileCount = FinalProjectileCount;
+
             Vector3? targetPosition = null;
 
             while (currentProjectileCount > 0)
@@ -118,7 +136,7 @@ public class PlayerRangedAttack : MonoBehaviour
 
                 --currentProjectileCount;
                 if (currentProjectileCount <= 0)
-                    yield return cooldownWait;
+                    yield return new WaitForSeconds(FinalCooldown);
                 else
                     yield return fireWait;
             }
@@ -134,7 +152,7 @@ public class PlayerRangedAttack : MonoBehaviour
 
         PlayerAttack projectile = pool.Get();
         projectile.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
-        projectile.GetComponent<Rigidbody2D>().linearVelocity = direction * projectileSpeed;
+        projectile.GetComponent<Rigidbody2D>().linearVelocity = direction * FinalProjectileSpeed;
     }
 
     private bool TryValidateSettings(out string error)
@@ -192,6 +210,11 @@ public class PlayerRangedAttack : MonoBehaviour
             return false;
         }
 
+        if (playerStats == null)
+        {
+            error = $"{nameof(playerStats)} was not found in parents";
+            return false;
+        }
         if (targetScanner == null)
         {
             error = $"{nameof(targetScanner)} was not found in parents";
