@@ -9,6 +9,7 @@ using UnityEngine.Pool;
 public class EnemyCharacter : MonoBehaviour
 {
     private IObjectPool<EnemyCharacter> ownerPool;
+    private DamageTextSpawner damageTextSpawner;
     private Action<int> onDefeated;
 
     private SpriteRenderer spriteRenderer;
@@ -51,11 +52,15 @@ public class EnemyCharacter : MonoBehaviour
         hitFlashWait = new WaitForSeconds(HitFlashTime);
     }
 
-    public void Init(IObjectPool<EnemyCharacter> pool, Action<int> onDefeated)
+    public void Init(IObjectPool<EnemyCharacter> pool, DamageTextSpawner damageTextSpawner, Action<int> onDefeated)
     {
         if (pool == null)
         {
             throw new ArgumentNullException(nameof(pool));
+        }
+        if (damageTextSpawner == null)
+        {
+            throw new ArgumentNullException(nameof(damageTextSpawner));
         }
         if (onDefeated == null)
         {
@@ -63,6 +68,7 @@ public class EnemyCharacter : MonoBehaviour
         }
 
         ownerPool = pool;
+        this.damageTextSpawner = damageTextSpawner;
         this.onDefeated = onDefeated;
     }
 
@@ -116,6 +122,8 @@ public class EnemyCharacter : MonoBehaviour
         {
             throw new System.ArgumentOutOfRangeException(nameof(damage));
         }
+
+        damageTextSpawner.Spawn(damage, transform.position);
 
         HitFlash();
         currentHp = Mathf.Max(0, currentHp - damage);
