@@ -10,6 +10,7 @@ public class EnemySpawner : MonoBehaviour
 
     [SerializeField] private GameTimer gameTimer;
     [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private DamageTextSpawner damageTextSpawner;
 
     private readonly Dictionary<EnemyData, ObjectPool<EnemyCharacter>> pools = new();
     [SerializeField, Min(0)] private int defaultCapacity = 10;
@@ -60,7 +61,7 @@ public class EnemySpawner : MonoBehaviour
                 ObjectPool<EnemyCharacter> pool = null;
 
                 pool = new ObjectPool<EnemyCharacter>(
-                    () => CreateEnemy(pool, data),
+                    () => CreateEnemy(pool, damageTextSpawner, data),
                     null,
                     OnReturnedEnemy,
                     OnDestroyEnemy,
@@ -79,10 +80,10 @@ public class EnemySpawner : MonoBehaviour
         return enemy;
     }
 
-    private EnemyCharacter CreateEnemy(IObjectPool<EnemyCharacter> ownerPool, EnemyData data)
+    private EnemyCharacter CreateEnemy(IObjectPool<EnemyCharacter> ownerPool, DamageTextSpawner damageTextSpawner, EnemyData data)
     {
         EnemyCharacter enemy = Instantiate(data.Prefab, transform);
-        enemy.Init(ownerPool, OnEnemyDefeated);
+        enemy.Init(ownerPool, damageTextSpawner, OnEnemyDefeated);
         enemy.gameObject.SetActive(false);
 
         return enemy;
@@ -227,6 +228,11 @@ public class EnemySpawner : MonoBehaviour
         if (playerStats == null)
         {
             error = $"{nameof(playerStats)} is Invalid";
+            return false;
+        }
+        if (damageTextSpawner == null)
+        {
+            error = $"{nameof(damageTextSpawner)} is Invalid";
             return false;
         }
 
