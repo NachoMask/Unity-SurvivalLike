@@ -54,3 +54,76 @@ MonoBehaviour:
   knockbackForce: 5
   activeDuration: 4
   rehitInterval: 1
+  upgradeLevels:
+  - description: 
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD68C\uC804 \uC18D\uB3C4 +30%\n\uACF5\uACA9 \uBC94\uC704 +25%"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0.3
+    attackRangeMultiplier: 0.25
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD53C\uD574\uB7C9 +10\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+    damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0.5
+    rehitIntervalReduction: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD68C\uC804 \uC18D\uB3C4 +30%\n\uACF5\uACA9 \uBC94\uC704 +25%"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0.3
+    attackRangeMultiplier: 0.25
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD53C\uD574\uB7C9 +10\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+    damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0.5
+    rehitIntervalReduction: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    orbitAngularSpeedMultiplier: 0
+    attackRangeMultiplier: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0

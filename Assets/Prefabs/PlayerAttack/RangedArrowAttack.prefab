@@ -55,3 +55,76 @@ MonoBehaviour:
   penetrationCount: 1
   defaultCapacity: 10
   maxPoolSize: 20
+  upgradeLevels:
+  - description: 
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uCFE8\uD0C0\uC784 -0.2\uCD08"
+    damageBonus: 0
+    cooldownReduction: 0.2
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uD53C\uD574\uB7C9 +10"
+    damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 1
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0
+  - description: "\uAD00\uD1B5 \uC218 +1"
+    damageBonus: 0
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 1
+  - description: "\uD53C\uD574\uB7C9 +10"
+    damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    projectileSizeMultiplierBonus: 0
+    knockbackForceBonus: 0
+    penetrationCountBonus: 0

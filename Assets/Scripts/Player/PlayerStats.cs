@@ -3,28 +3,29 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    public const int MinimumMaxHp = 1;
-    public const int MinimumCurrentHp = 0;
-    public const int MinimumRecoveryAmount = 0;
+    public const float MinimumMaxHp = 1f;
+    public const float MinimumCurrentHp = 0f;
+    public const float MinimumRecoveryAmount = 0f;
     public const int MinimumDefense = 0;
     public const int MinimumProjectileCountBonus = 0;
+    private const float RecoveryInterval = 1f;
 
     public event Action<int> LevelChanged;
     public event Action<float, float> ExpChanged;
     public event Action<int> KillCountChanged;
-    public event Action<int, int> HpChanged;
+    public event Action<float, float> HpChanged;
 
     private int level = 1;
     private float currentExp = 0f;
     private float maxExp = 5f;
     private int killCount = 0;
 
-    private int maxHpBase = 100;
-    private int recoveryAmount = 0;
+    private float maxHpBase = 100f;
+    private float recoveryAmount = 0f;
     private int defense = 0;
     private float moveSpeedBase = 2f;
 
-    private int maxHpBonus = 0;
+    private float maxHpBonus = 0f;
     private int projectileCountBonus = 0;
     private float moveSpeedBonus = 0f;
     private float attackBonus = 0f;
@@ -34,13 +35,17 @@ public class PlayerStats : MonoBehaviour
     private float cooldownReductionBonus = 0f;
     private float expBonus = 0f;
 
+    private bool isLevelUpPending;
+
+    private float recoveryElapsedTime;
+
     public int Level => level;
     public float CurrentExp => currentExp;
     public float MaxExp => maxExp;
     public int KillCount => killCount;
 
-    public int MaxHp => Mathf.Max(MinimumMaxHp, maxHpBase + maxHpBonus);
-    public int RecoveryAmount => recoveryAmount;
+    public float MaxHp => Mathf.Max(MinimumMaxHp, maxHpBase *(1 + maxHpBonus));
+    public float RecoveryAmount => recoveryAmount;
     public int Defense => defense;
     public int ProjectileCountBonus => projectileCountBonus;
     public float MoveSpeed => moveSpeedBase * (1f + moveSpeedBonus);
@@ -51,23 +56,54 @@ public class PlayerStats : MonoBehaviour
     public float CooldownMultiplier => Mathf.Max(0.1f, 1f - cooldownReductionBonus);
     public float ExpMultiplier => (1f + expBonus);
 
-    public int CurrentHp { get; private set; }
+    public float CurrentHp { get; private set; }
+
+    public bool IsLevelUpPending => isLevelUpPending;
 
     private void Awake()
     {
         CurrentHp = MaxHp;
     }
 
-    public void TakeDamage(int damage)
+    private void Update()
+    {
+        if (RecoveryAmount <= 0f ||
+            CurrentHp <= MinimumCurrentHp ||
+            CurrentHp >= MaxHp)
+        {
+            recoveryElapsedTime = 0f;
+            return;
+        }
+
+        recoveryElapsedTime += Time.deltaTime;
+
+        while (recoveryElapsedTime >= RecoveryInterval)
+        {
+            recoveryElapsedTime -= RecoveryInterval;
+            Heal(RecoveryAmount);
+        }
+    }
+
+    public void TakeDamage(float damage)
     {
         if (damage <= 0)
         {
-            throw new System.ArgumentOutOfRangeException(nameof(damage));
+            throw new ArgumentOutOfRangeException(nameof(damage));
         }
 
-        int finalDamage = Mathf.Max(1, damage - Defense);
+        float finalDamage = (float)Mathf.Max(1f, damage - Defense);
 
         SetCurrentHp(CurrentHp - finalDamage);
+    }
+
+    private void Heal(float healAmount)
+    {
+        if (healAmount <= 0f)
+        {
+            throw new ArgumentOutOfRangeException(nameof(healAmount));
+        }
+
+        SetCurrentHp(CurrentHp + healAmount);
     }
 
     public void AddExp(int exp)
@@ -82,12 +118,7 @@ public class PlayerStats : MonoBehaviour
 
         currentExp += finalExp;
 
-        while (currentExp >= maxExp)
-        {
-            currentExp -= maxExp;
-
-            LevelUp();
-        }
+        TryBeginLevelUp();
 
         ExpChanged?.Invoke(currentExp, maxExp);
     }
@@ -98,29 +129,100 @@ public class PlayerStats : MonoBehaviour
         KillCountChanged?.Invoke(killCount);
     }
 
-    private void LevelUp()
+    private void TryBeginLevelUp()
     {
+        if (isLevelUpPending) return;
+        if (currentExp < maxExp) return;
+
+        currentExp -= maxExp;
+
         ++level;
         maxExp *= 1.5f;
 
+        isLevelUpPending = true;
         LevelChanged?.Invoke(level);
     }
 
-    private void AddMaxHpBonus(int value)
+    public void CompleteLevelUp()
     {
-        if (value == 0) return;
+        if (!isLevelUpPending)
+        {
+            throw new InvalidOperationException(
+                "There is no pending LevelUp to complete");
+        }
 
-        int prevMaxHp = MaxHp;
+        isLevelUpPending = false;
+
+        TryBeginLevelUp();
+
+        ExpChanged?.Invoke(currentExp, maxExp);
+    }
+
+    public void ApplyPassiveUpgrade(PlayerPassiveDefinition.PassiveStat stat, float amount)
+    {
+        if (!Enum.IsDefined(typeof(PlayerPassiveDefinition.PassiveStat), stat))
+            throw new ArgumentOutOfRangeException(nameof(stat));
+
+        if (float.IsNaN(amount) || float.IsInfinity(amount) || amount <= 0f)
+            throw new ArgumentOutOfRangeException(nameof(amount));
+
+        if (PlayerPassiveDefinition.IsIntegerStat(stat) &&
+            !Mathf.Approximately(amount, Mathf.Round(amount)))
+            throw new ArgumentException($"{stat} requires an integer amount.", nameof(amount));
+
+        switch (stat)
+        {
+            case PlayerPassiveDefinition.PassiveStat.MaxHpBonus:
+                AddMaxHpBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.RecoveryAmount:
+                AddRecoveryAmount(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.Defense:
+                AddDefense(Mathf.RoundToInt(amount));
+                break;
+            case PlayerPassiveDefinition.PassiveStat.ProjectileCountBonus:
+                AddProjectileCountBonus(Mathf.RoundToInt(amount));
+                break;
+            case PlayerPassiveDefinition.PassiveStat.MoveSpeedBonus:
+                AddMoveSpeedBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.AttackBonus:
+                AddAttackBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.ProjectileSpeedBonus:
+                AddProjectileSpeedBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.ActiveDurationBonus:
+                AddActiveDurationBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.AttackRangeBonus:
+                AddAttackRangeBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.CooldownReductionBonus:
+                AddCooldownReductionBonus(amount);
+                break;
+            case PlayerPassiveDefinition.PassiveStat.ExpBonus:
+                AddExpBonus(amount);
+                break;
+        }
+    }
+
+    private void AddMaxHpBonus(float value)
+    {
+        if (value == 0f) return;
+
+        float prevMaxHp = MaxHp;
 
         maxHpBonus += value;
-        CurrentHp = Mathf.RoundToInt(CurrentHp * ((float)MaxHp / prevMaxHp));
+        CurrentHp *= MaxHp / prevMaxHp;
 
         HpChanged?.Invoke(CurrentHp, MaxHp);
     }
 
-    private void SetCurrentHp(int newCurrentHp)
+    private void SetCurrentHp(float newCurrentHp)
     {
-        int prevCurrentHp = CurrentHp;
+        float prevCurrentHp = CurrentHp;
 
         if (newCurrentHp == prevCurrentHp) return;
 
@@ -128,9 +230,9 @@ public class PlayerStats : MonoBehaviour
         HpChanged?.Invoke(CurrentHp, MaxHp);
     }
 
-    private void AddRecoveryAmount(int value)
+    private void AddRecoveryAmount(float value)
     {
-        int newValue = Mathf.Max(MinimumRecoveryAmount, recoveryAmount + value);
+        float newValue = Mathf.Max(MinimumRecoveryAmount, recoveryAmount + value);
 
         if (newValue == recoveryAmount) return;
 
