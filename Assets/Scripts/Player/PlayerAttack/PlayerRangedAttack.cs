@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class PlayerRangedAttack : MonoBehaviour
+public class PlayerRangedAttack : MonoBehaviour, IPlayerAttackUpgradeable
 {
     [Header("Projectile")]
     [SerializeField] private PlayerAttack projectilePrefab;
@@ -17,10 +18,17 @@ public class PlayerRangedAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumKnockbackForce)] private int knockbackForce;
     [SerializeField, Min(PlayerAttack.MinimumPenetrationCount)] private int penetrationCount;
 
+    private int damageBonus;
+    private float cooldownReduction;
+    private int projectileCountBonus;
+    private float fireIntervalReduction;
+    private float projectileSpeedMultiplier;
+    private float projectileSizeMultiplierBonus;
+    private int knockbackForceBonus;
+    private int penetrationCountBonus;
+
     private PlayerStats playerStats;
     private PlayerTargetScanner targetScanner;
-
-    private WaitForSeconds fireWait;
 
     private ObjectPool<PlayerAttack> pool;
 
@@ -30,20 +38,54 @@ public class PlayerRangedAttack : MonoBehaviour
 
     public int FinalDamage => Mathf.Max(
         PlayerAttack.MinimumDamage,
-        Mathf.RoundToInt(damage * playerStats.AttackMultiplier));
+        Mathf.RoundToInt((damage + damageBonus) * playerStats.AttackMultiplier));
     public float FinalCooldown => Mathf.Max(
         PlayerAttack.MinimumCooldownDuration,
-        cooldownDuration * playerStats.CooldownMultiplier);
+        (cooldownDuration - cooldownReduction) * playerStats.CooldownMultiplier);
     public int FinalProjectileCount => Mathf.Clamp(
-        projectileCount + playerStats.ProjectileCountBonus,
+        projectileCount + projectileCountBonus + playerStats.ProjectileCountBonus,
         PlayerAttack.MinimumProjectileCount,
         PlayerAttack.MaximumProjectileCount);
+    public float FinalFireInterval => Mathf.Max(
+        PlayerAttack.MinimumFireInterval,
+        fireInterval - fireIntervalReduction);
     public float FinalProjectileSpeed => Mathf.Max(
         PlayerAttack.MinimumProjectileSpeed,
-        projectileSpeed * playerStats.ProjectileSpeedMultiplier);
+        projectileSpeed * (projectileSpeedMultiplier + playerStats.ProjectileSpeedMultiplier));
     public float FinalProjectileSizeMultiplier => Mathf.Max(
         PlayerAttack.MinimumAttackRange,
-        projectileSizeMultiplier * playerStats.AttackRangeMultiplier);
+        projectileSizeMultiplier * (projectileSizeMultiplierBonus + playerStats.AttackRangeMultiplier));
+    public int FinalKnockbackForce => Mathf.Max(
+        PlayerAttack.MinimumKnockbackForce,
+        knockbackForce + knockbackForceBonus);
+    public int FinalPenetrationCount => Mathf.Max(
+        PlayerAttack.MinimumPenetrationCount,
+        penetrationCount + penetrationCountBonus);
+
+    [Serializable]
+    private struct UpgradeLevel
+    {
+        [TextArea] public string description;
+
+        [Min(0)] public int damageBonus;
+        [Min(0f)] public float cooldownReduction;
+        [Min(0)] public int projectileCountBonus;
+        [Min(0f)] public float fireIntervalReduction;
+        [Min(0f)] public float projectileSpeedMultiplier;
+        [Min(0f)] public float projectileSizeMultiplierBonus;
+        [Min(0)] public int knockbackForceBonus;
+        [Min(0)] public int penetrationCountBonus;
+    }
+
+    [Header("Upgrade")]
+    [SerializeField] private UpgradeLevel[] upgradeLevels;
+
+    private int level = 1;
+
+    public int Level => level;
+    public int MaxLevel => upgradeLevels.Length;
+    public bool CanUpgrade => Level < MaxLevel;
+    public string NextUpgradeDescription => CanUpgrade ? upgradeLevels[level].description : string.Empty;
 
     private void Awake()
     {
@@ -56,8 +98,6 @@ public class PlayerRangedAttack : MonoBehaviour
             enabled = false;
             return;
         }
-
-        fireWait = new WaitForSeconds(fireInterval);
 
         CreatePool();
     }
@@ -81,7 +121,7 @@ public class PlayerRangedAttack : MonoBehaviour
 
     private void OnProjectileTake(PlayerAttack projectile)
     {
-        projectile.InitPenetration(pool, FinalDamage, knockbackForce, penetrationCount);
+        projectile.InitPenetration(pool, FinalDamage, FinalKnockbackForce, FinalPenetrationCount);
 
         projectile.transform.SetParent(null);
         projectile.transform.position = transform.position;
@@ -138,7 +178,7 @@ public class PlayerRangedAttack : MonoBehaviour
                 if (currentProjectileCount <= 0)
                     yield return new WaitForSeconds(FinalCooldown);
                 else
-                    yield return fireWait;
+                    yield return new WaitForSeconds(FinalFireInterval);
             }
         }
     }
@@ -153,6 +193,25 @@ public class PlayerRangedAttack : MonoBehaviour
         PlayerAttack projectile = pool.Get();
         projectile.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
         projectile.GetComponent<Rigidbody2D>().linearVelocity = direction * FinalProjectileSpeed;
+    }
+
+    public bool TryUpgrade()
+    {
+        if (!CanUpgrade) return false;
+
+        UpgradeLevel upgrade = upgradeLevels[level];
+
+        damageBonus += upgrade.damageBonus;
+        cooldownReduction += upgrade.cooldownReduction;
+        projectileCountBonus += upgrade.projectileCountBonus;
+        fireIntervalReduction += upgrade.fireIntervalReduction;
+        projectileSpeedMultiplier += upgrade.projectileSpeedMultiplier;
+        projectileSizeMultiplierBonus += upgrade.projectileSizeMultiplierBonus;
+        knockbackForceBonus += upgrade.knockbackForceBonus;
+        penetrationCountBonus += upgrade.penetrationCountBonus;
+
+        ++level;
+        return true;
     }
 
     private bool TryValidateSettings(out string error)
@@ -230,6 +289,21 @@ public class PlayerRangedAttack : MonoBehaviour
         {
             error = $"{nameof(maxPoolSize)} must be at least 1";
             return false;
+        }
+
+        if (upgradeLevels == null || upgradeLevels.Length == 0)
+        {
+            error = $"{nameof(upgradeLevels)} must contain at least one level.";
+            return false;
+        }
+
+        for (int i = 1; i < upgradeLevels.Length; ++i)
+        {
+            if (string.IsNullOrWhiteSpace(upgradeLevels[i].description))
+            {
+                error = $"{nameof(upgradeLevels)}[{i}].description is invalid.";
+                return false;
+            }
         }
 
         error = null;

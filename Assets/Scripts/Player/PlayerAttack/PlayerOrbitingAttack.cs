@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerOrbitingAttack : MonoBehaviour
+public class PlayerOrbitingAttack : MonoBehaviour, IPlayerAttackUpgradeable
 {
     [Header("Projectile")]
     [SerializeField] private PlayerAttack projectilePrefab;
@@ -20,6 +21,15 @@ public class PlayerOrbitingAttack : MonoBehaviour
     [SerializeField, Min(PlayerAttack.MinimumActiveDuration)] private float activeDuration;
     [SerializeField, Min(PlayerAttack.MinimumRehitInterval)] private float rehitInterval;
 
+    private int damageBonus;
+    private float cooldownReduction;
+    private int projectileCountBonus;
+    private float orbitAngularSpeedMultiplier;
+    private float attackRangeMultiplier;
+    private int knockbackForceBonus;
+    private float activeDurationBonus;
+    private float rehitIntervalReduction;
+
     private readonly List<PlayerAttack> projectiles = new();
     private int activeProjectileCount;
 
@@ -28,23 +38,54 @@ public class PlayerOrbitingAttack : MonoBehaviour
 
     public int FinalDamage => Mathf.Max(
         PlayerAttack.MinimumDamage,
-        Mathf.RoundToInt(damage * playerStats.AttackMultiplier));
+        Mathf.RoundToInt((damage + damageBonus) * playerStats.AttackMultiplier));
     public float FinalCooldown => Mathf.Max(
         PlayerAttack.MinimumCooldownDuration,
-        cooldownDuration * playerStats.CooldownMultiplier);
+        (cooldownDuration - cooldownReduction) * playerStats.CooldownMultiplier);
     public int FinalProjectileCount => Mathf.Clamp(
-        projectileCount + playerStats.ProjectileCountBonus,
+        projectileCount + projectileCountBonus + playerStats.ProjectileCountBonus,
         PlayerAttack.MinimumProjectileCount,
         PlayerAttack.MaximumProjectileCount);
     public float FinalOrbitAngularSpeed => Mathf.Max(
         PlayerAttack.MinimumProjectileSpeed,
-        orbitAngularSpeed * playerStats.ProjectileSpeedMultiplier);
+        orbitAngularSpeed * (orbitAngularSpeedMultiplier + playerStats.ProjectileSpeedMultiplier));
     public float FinalAttackRange => Mathf.Max(
         PlayerAttack.MinimumAttackRange,
-        attackRange * playerStats.AttackRangeMultiplier);
+        attackRange * (attackRangeMultiplier + playerStats.AttackRangeMultiplier));
+    public int FinalKnockbackForce => Mathf.Max(
+        PlayerAttack.MinimumKnockbackForce,
+        knockbackForce + knockbackForceBonus);
     public float FinalActiveDuration => Mathf.Max(
         PlayerAttack.MinimumActiveDuration,
-        activeDuration * playerStats.ActiveDurationMultiplier);
+        (activeDuration + activeDurationBonus)* playerStats.ActiveDurationMultiplier);
+    public float FinalRehitDuration => Mathf.Max(
+        PlayerAttack.MinimumRehitInterval,
+        rehitInterval - rehitIntervalReduction);
+
+    [Serializable]
+    private struct UpgradeLevel
+    {
+        [TextArea] public string description;
+
+        [Min(0)] public int damageBonus;
+        [Min(0f)] public float cooldownReduction;
+        [Min(0)] public int projectileCountBonus;
+        [Min(0f)] public float orbitAngularSpeedMultiplier;
+        [Min(0f)] public float attackRangeMultiplier;
+        [Min(0)] public int knockbackForceBonus;
+        [Min(0f)] public float activeDurationBonus;
+        [Min(0f)] public float rehitIntervalReduction;
+    }
+
+    [Header("Upgrade")]
+    [SerializeField] private UpgradeLevel[] upgradeLevels;
+
+    private int level = 1;
+
+    public int Level => level;
+    public int MaxLevel => upgradeLevels.Length;
+    public bool CanUpgrade => Level < MaxLevel;
+    public string NextUpgradeDescription => CanUpgrade ? upgradeLevels[level].description : string.Empty;
 
     private void Awake()
     {
@@ -119,8 +160,7 @@ public class PlayerOrbitingAttack : MonoBehaviour
         {
             PlayerAttack projectile = projectiles[i];
 
-            projectile.InitRehit(FinalDamage, knockbackForce, rehitInterval);
-
+            projectile.InitRehit(FinalDamage, FinalKnockbackForce, FinalRehitDuration);
             projectile.gameObject.SetActive(true);
         }
 
@@ -161,6 +201,25 @@ public class PlayerOrbitingAttack : MonoBehaviour
         projectileTransform.localPosition = new Vector2(
             Mathf.Cos(radians),
             Mathf.Sin(radians)) * FinalAttackRange;
+    }
+
+    public bool TryUpgrade()
+    {
+        if (level >= upgradeLevels.Length) return false;
+
+        UpgradeLevel upgrade = upgradeLevels[level];
+
+        damageBonus += upgrade.damageBonus;
+        cooldownReduction += upgrade.cooldownReduction;
+        projectileCountBonus += upgrade.projectileCountBonus;
+        orbitAngularSpeedMultiplier += upgrade.orbitAngularSpeedMultiplier;
+        attackRangeMultiplier += upgrade.attackRangeMultiplier;
+        knockbackForceBonus += upgrade.knockbackForceBonus;
+        activeDurationBonus += upgrade.activeDurationBonus;
+        rehitIntervalReduction += upgrade.rehitIntervalReduction;
+
+        ++level;
+        return true;
     }
 
     private bool TryValidateSettings(out string error)
@@ -218,6 +277,21 @@ public class PlayerOrbitingAttack : MonoBehaviour
         {
             error = $"{nameof(playerStats)} was not found in parents";
             return false;
+        }
+
+        if (upgradeLevels == null || upgradeLevels.Length == 0)
+        {
+            error = $"{nameof(upgradeLevels)} must contain at least one level.";
+            return false;
+        }
+
+        for (int i = 1; i < upgradeLevels.Length; ++i)
+        {
+            if (string.IsNullOrWhiteSpace(upgradeLevels[i].description))
+            {
+                error = $"{nameof(upgradeLevels)}[{i}].description is invalid.";
+                return false;
+            }
         }
 
         error = null;

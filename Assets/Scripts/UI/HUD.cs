@@ -84,9 +84,9 @@ public class HUD : MonoBehaviour
         killCountText.text = $"{killCount}";
     }
 
-    private void UpdateHpMeter(int currentHp, int maxHp)
+    private void UpdateHpMeter(float currentHp, float maxHp)
     {
-        hpMeter.value = (float)currentHp / maxHp;
+        hpMeter.value = currentHp / maxHp;
     }
 
     private bool TryValidateSettings(out string error)
