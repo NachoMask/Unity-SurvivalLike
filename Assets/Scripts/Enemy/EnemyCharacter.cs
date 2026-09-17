@@ -21,6 +21,7 @@ public class EnemyCharacter : MonoBehaviour
     private int currentHp;
     private float moveSpeed;
     private int expReward;
+    private float contactDamage;
 
     private bool isSpawned = false;
     private bool isInKnockback = false;
@@ -33,6 +34,8 @@ public class EnemyCharacter : MonoBehaviour
 
     private Coroutine hitFlashCoroutine = null;
     private WaitForSeconds hitFlashWait;
+
+    public float ContactDamage => contactDamage;
 
     private void Awake()
     {
@@ -83,6 +86,7 @@ public class EnemyCharacter : MonoBehaviour
         currentHp = data.MaxHp;
         moveSpeed = data.MoveSpeed;
         expReward = data.Exp;
+        contactDamage = data.ContactDamage;
         moveTarget = target;
 
         materialPropertyBlock.SetFloat(HitFlashFactorId, 0f);

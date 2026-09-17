@@ -9,7 +9,7 @@ public class PlayerUpgradeController : MonoBehaviour
     private const int MaximumOwnedPassiveCount = 6;
     private const int MaximumUpgradeChoiceCount = 3;
 
-    [SerializeField] private PlayerController playerController;
+    [SerializeField] private GameFlowController gameFlowController;
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private Transform playerAttackRoot;
 
@@ -24,7 +24,6 @@ public class PlayerUpgradeController : MonoBehaviour
     [SerializeField] private PlayerUpgradeDefinition[] availableUpgradeDefinitions;
     [SerializeField] private PlayerAttackDefinition[] startingAttackDefinitions;
 
-    private float prevTimeScale;
     private bool isSelectingUpgrade;
 
     private readonly List<PlayerUpgradeDefinition> upgradeCandidates = new();
@@ -67,13 +66,19 @@ public class PlayerUpgradeController : MonoBehaviour
     private void OnEnable()
     {
         playerStats.LevelChanged += BeginUpgradeSelection;
+        gameFlowController.GameOver += CancelUpgradeSelection;
     }
 
     private void OnDisable()
     {
-        if (playerStats == null) return;
-
-        playerStats.LevelChanged -= BeginUpgradeSelection;
+        if (playerStats != null)
+        {
+            playerStats.LevelChanged -= BeginUpgradeSelection;
+        }
+        if (gameFlowController != null)
+        {
+            gameFlowController.GameOver -= CancelUpgradeSelection;
+        }
     }
 
     private void BeginUpgradeSelection(int level)
@@ -86,10 +91,7 @@ public class PlayerUpgradeController : MonoBehaviour
         }
         else
         {
-            playerController.enabled = false;
-
-            prevTimeScale = Time.timeScale;
-            Time.timeScale = 0f;
+            if (!gameFlowController.TryBeginUpgradeSelection()) return;
 
             isSelectingUpgrade = true;
 
@@ -276,22 +278,27 @@ public class PlayerUpgradeController : MonoBehaviour
 
     private void EndUpgradeSelection()
     {
+        if (!gameFlowController.TryEndUpgradeSelection()) return;
+
         EventSystem.current.SetSelectedGameObject(null);
 
         levelupScreen.SetActive(false);
 
         isSelectingUpgrade = false;
+    }
 
-        Time.timeScale = prevTimeScale;
-
-        playerController.enabled = true;
+    private void CancelUpgradeSelection()
+    {
+        isSelectingUpgrade = false;
+        levelupScreen.SetActive(false);
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     private bool TryValidateSettings(out string error)
     {
-        if (playerController == null)
+        if (gameFlowController == null)
         {
-            error = $"{nameof(playerController)} is Invalid";
+            error = $"{nameof(gameFlowController)} is Invalid.";
             return false;
         }
 

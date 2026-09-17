@@ -24,6 +24,7 @@ public class PlayerStats : MonoBehaviour
     private float recoveryAmount = 0f;
     private int defense = 0;
     private float moveSpeedBase = 2f;
+    private float invulnerabilityTimeBase = 0.25f;
 
     private float maxHpBonus = 0f;
     private int projectileCountBonus = 0;
@@ -34,6 +35,7 @@ public class PlayerStats : MonoBehaviour
     private float attackRangeBonus = 0f;
     private float cooldownReductionBonus = 0f;
     private float expBonus = 0f;
+    private float invulnerabilityTimeBonus = 0f;
 
     private bool isLevelUpPending;
 
@@ -55,9 +57,11 @@ public class PlayerStats : MonoBehaviour
     public float AttackRangeMultiplier => (1f + attackRangeBonus);
     public float CooldownMultiplier => Mathf.Max(0.1f, 1f - cooldownReductionBonus);
     public float ExpMultiplier => (1f + expBonus);
+    public float InvulnerabilityTime => invulnerabilityTimeBase + invulnerabilityTimeBonus;
 
     public float CurrentHp { get; private set; }
 
+    public bool IsDead => CurrentHp <= 0f;
     public bool IsLevelUpPending => isLevelUpPending;
 
     private void Awake()
