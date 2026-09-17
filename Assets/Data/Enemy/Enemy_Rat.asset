@@ -16,3 +16,4 @@ MonoBehaviour:
   maxHp: 10
   moveSpeed: 0.3
   exp: 1
+  contactDamage: 1
