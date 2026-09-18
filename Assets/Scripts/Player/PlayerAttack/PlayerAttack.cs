@@ -25,7 +25,7 @@ public class PlayerAttack : MonoBehaviour
     public const int MaximumProjectileCount = 20;
 
     private const string RequiredLayerName = "PlayerAttack";
-    private const string DetectorLayerName = "RepositionDetector";
+    private const string DetectorLayerName = "ChunkRepositionDetector";
 
     private Collider2D attackCollider;
     private int detectorLayer;

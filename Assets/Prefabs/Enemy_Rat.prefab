@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5891972132560684255}
   - component: {fileID: 8440520602777905871}
   - component: {fileID: 4984551012098407418}
-  - component: {fileID: 1997259299099510379}
+  - component: {fileID: 5453973731630943776}
   m_Layer: 9
   m_Name: Enemy_Rat
   m_TagString: Untagged
@@ -167,7 +167,7 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 0.8, y: 0.6}
   m_Direction: 1
---- !u!114 &1997259299099510379
+--- !u!114 &5453973731630943776
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -176,11 +176,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3888933859203603280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 99c7e0de8b3016543b7e7544430c7ffa, type: 3}
+  m_Script: {fileID: 11500000, guid: c644db94c10d9124d98924eb1d03ce92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  repositionDetectLayer:
+  detectLayer:
     serializedVersion: 2
-    m_Bits: 64
-  repositionSize: {x: 10, y: 10}
-  repositionRandomRange: 3
+    m_Bits: 2048
