@@ -34,6 +34,11 @@ public class PlayerUpgradeController : MonoBehaviour
 
     private readonly Dictionary<PlayerUpgradeDefinition, OwnedUpgradeView> ownedUpgradeViews = new();
 
+    public IReadOnlyDictionary<PlayerAttackDefinition, IPlayerAttackUpgradeable> OwnedAttacks
+        => ownedAttacks;
+    public IReadOnlyDictionary<PlayerPassiveDefinition, int> OwnedPassives
+        => ownedPassives;
+
     private void Awake()
     {
         if (!TryValidateSettings(out string error))
