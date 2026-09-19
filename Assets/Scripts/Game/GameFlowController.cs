@@ -1,5 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameFlowController : MonoBehaviour
 {
@@ -10,9 +13,20 @@ public class GameFlowController : MonoBehaviour
         GameOver
     }
 
+    [Header("# Playing")]
+    [SerializeField] private GameTimer gameTimer;
     [SerializeField] private PlayerController playerController;
     [SerializeField] private PlayerStats playerStats;
+    [SerializeField] private PlayerUpgradeController playerUpgradeController;
+
+    [Header("# GameOver")]
     [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private Button quitButton;
+
+    [Header("# Results")]
+    [SerializeField] private GameObject resultScreen;
+    [SerializeField] private GameResultView gameResultView;
+    [SerializeField] private Button doneButton;
 
     public event Action GameOver;
 
@@ -72,6 +86,8 @@ public class GameFlowController : MonoBehaviour
 
         GameOver?.Invoke();
         gameOverScreen.SetActive(true);
+
+        EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
     }
 
     private void SetState(GameState state)
@@ -84,8 +100,29 @@ public class GameFlowController : MonoBehaviour
         playerController.enabled = isPlaying;
     }
 
+    public void ShowResults()
+    {
+        gameOverScreen.SetActive(false);
+
+        gameResultView.Show(gameTimer.ElapsedSeconds, playerStats.Level, playerStats.KillCount,
+            playerUpgradeController.OwnedAttacks, playerUpgradeController.OwnedPassives);
+
+        resultScreen.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(doneButton.gameObject);
+    }
+
+    public void EnterTitle()
+    {
+        SceneManager.LoadScene("TitleScene");
+    }
+
     private bool TryValidateSettings(out string error)
     {
+        if (gameTimer == null)
+        {
+            error = $"{nameof(gameTimer)} is Invalid.";
+            return false;
+        }
         if (playerController == null)
         {
             error = $"{nameof(playerController)} is Invalid.";
@@ -96,9 +133,41 @@ public class GameFlowController : MonoBehaviour
             error = $"{nameof(playerStats)} is Invalid.";
             return false;
         }
+        if (playerUpgradeController == null)
+        {
+            error = $"{nameof(playerUpgradeController)} is Invalid.";
+            return false;
+        }
         if (gameOverScreen == null)
         {
             error = $"{nameof(gameOverScreen)} is Invalid.";
+            return false;
+        }
+        if (quitButton == null)
+        {
+            error = $"{nameof(quitButton)} is Invalid.";
+            return false;
+        }
+        if (resultScreen == null)
+        {
+            error = $"{nameof(resultScreen)} is Invalid.";
+            return false;
+        }
+
+        if (gameResultView == null)
+        {
+            error = $"{nameof(gameResultView)} is Invalid.";
+            return false;
+        }
+        if (!gameResultView.TryValidateSettings(out string viewError))
+        {
+            error = $"{nameof(gameResultView)}'s {viewError}";
+            return false;
+        }
+
+        if (doneButton == null)
+        {
+            error = $"{nameof(doneButton)} is Invalid.";
             return false;
         }
 
