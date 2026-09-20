@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class GameFlowController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class GameFlowController : MonoBehaviour
     {
         Playing,
         SelectingUpgrade,
+        Paused,
         GameOver
     }
 
@@ -18,6 +20,14 @@ public class GameFlowController : MonoBehaviour
     [SerializeField] private PlayerController playerController;
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private PlayerUpgradeController playerUpgradeController;
+
+    [Header("# Pause")]
+    [SerializeField] private GameObject pauseScreen;
+    [SerializeField] private PauseView pauseView;
+    [SerializeField] private Button continueButton;
+    [SerializeField] private InputActionReference pauseActionRef;
+
+    private InputAction pauseAction;
 
     [Header("# GameOver")]
     [SerializeField] private GameObject gameOverScreen;
@@ -34,6 +44,8 @@ public class GameFlowController : MonoBehaviour
 
     private void Awake()
     {
+        pauseAction = pauseActionRef?.action;
+
         if (!TryValidateSettings(out string error))
         {
             Debug.LogError($"{nameof(GameFlowController)} {name}: {error}", this);
@@ -41,6 +53,7 @@ public class GameFlowController : MonoBehaviour
             return;
         }
 
+        pauseScreen.SetActive(false);
         gameOverScreen.SetActive(false);
         Time.timeScale = 1f;
     }
@@ -48,12 +61,80 @@ public class GameFlowController : MonoBehaviour
     private void OnEnable()
     {
         playerStats.HpChanged += OnHpChanged;
+        pauseAction.performed += OnPausePerformed;
     }
 
     private void OnDisable()
     {
         if (playerStats != null)
             playerStats.HpChanged -= OnHpChanged;
+
+        if (pauseAction != null)
+            pauseAction.performed -= OnPausePerformed;
+    }
+
+    private void OnPausePerformed(InputAction.CallbackContext context)
+    {
+        switch (State)
+        {
+            case GameState.Playing:
+                TryBeginPause();
+                break;
+            case GameState.Paused:
+                TryEndPause();
+                break;
+
+            case GameState.SelectingUpgrade:
+            case GameState.GameOver:
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    private bool TryBeginPause()
+    {
+        if (State == GameState.GameOver) return false;
+
+        if (State != GameState.Playing)
+            throw new InvalidOperationException($"Can't begin pause in state {State}.");
+
+        SetState(GameState.Paused);
+
+        ShowPauseScreen();
+
+        return true;
+    }
+
+    private bool TryEndPause()
+    {
+        if (State == GameState.GameOver) return false;
+
+        if (State != GameState.Paused)
+            throw new InvalidOperationException($"Can't end pause in state {State}.");
+
+        HidePauseScreen();
+
+        SetState(GameState.Playing);
+
+        return true;
+    }
+
+    public void ContinueGame()
+    {
+        if (State != GameState.Paused) return;
+
+        TryEndPause();
+    }
+
+    public void ExitPausedGame()
+    {
+        if (State != GameState.Paused) return;
+
+        HidePauseScreen();
+        SetState(GameState.GameOver);
+        ShowResults();
     }
 
     public bool TryBeginUpgradeSelection()
@@ -100,6 +181,20 @@ public class GameFlowController : MonoBehaviour
         playerController.enabled = isPlaying;
     }
 
+    private void ShowPauseScreen()
+    {
+        pauseView.Show(playerStats, playerUpgradeController.OwnedAttacks, playerUpgradeController.OwnedPassives);
+
+        pauseScreen.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
+    }
+
+    private void HidePauseScreen()
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+        pauseScreen.SetActive(false);
+    }
+
     public void ShowResults()
     {
         gameOverScreen.SetActive(false);
@@ -138,6 +233,38 @@ public class GameFlowController : MonoBehaviour
             error = $"{nameof(playerUpgradeController)} is Invalid.";
             return false;
         }
+
+        if (pauseScreen == null)
+        {
+            error = $"{nameof(pauseScreen)} is Invalid.";
+            return false;
+        }
+        if (pauseView == null)
+        {
+            error = $"{nameof(pauseView)} is Invalid.";
+            return false;
+        }
+        if (!pauseView.TryValidateSettings(out string pauseViewError))
+        {
+            error = $"{nameof(pauseView)}'s {pauseViewError}";
+            return false;
+        }
+        if (continueButton == null)
+        {
+            error = $"{nameof(continueButton)} is Invalid.";
+            return false;
+        }
+        if (pauseActionRef == null)
+        {
+            error = $"{nameof(pauseActionRef)} is Invalid.";
+            return false;
+        }
+        if (pauseAction == null)
+        {
+            error = $"{nameof(pauseAction)} is Invalid.";
+            return false;
+        }
+
         if (gameOverScreen == null)
         {
             error = $"{nameof(gameOverScreen)} is Invalid.";
@@ -148,23 +275,22 @@ public class GameFlowController : MonoBehaviour
             error = $"{nameof(quitButton)} is Invalid.";
             return false;
         }
+
         if (resultScreen == null)
         {
             error = $"{nameof(resultScreen)} is Invalid.";
             return false;
         }
-
         if (gameResultView == null)
         {
             error = $"{nameof(gameResultView)} is Invalid.";
             return false;
         }
-        if (!gameResultView.TryValidateSettings(out string viewError))
+        if (!gameResultView.TryValidateSettings(out string resultViewError))
         {
-            error = $"{nameof(gameResultView)}'s {viewError}";
+            error = $"{nameof(gameResultView)}'s {resultViewError}";
             return false;
         }
-
         if (doneButton == null)
         {
             error = $"{nameof(doneButton)} is Invalid.";
