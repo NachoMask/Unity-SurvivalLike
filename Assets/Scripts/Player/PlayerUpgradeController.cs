@@ -13,8 +13,8 @@ public class PlayerUpgradeController : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private Transform playerAttackRoot;
 
-    [SerializeField] private OwnedUpgradeView[] attackViews;
-    [SerializeField] private OwnedUpgradeView[] passiveViews;
+    [SerializeField] private OwnedUpgradeHUDView[] attackViews;
+    [SerializeField] private OwnedUpgradeHUDView[] passiveViews;
     private int lastAttackIndex = 0;
     private int lastPassiveIndex = 0;
 
@@ -31,8 +31,6 @@ public class PlayerUpgradeController : MonoBehaviour
 
     private readonly Dictionary<PlayerAttackDefinition, IPlayerAttackUpgradeable> ownedAttacks = new();
     private readonly Dictionary<PlayerPassiveDefinition, int> ownedPassives = new();
-
-    private readonly Dictionary<PlayerUpgradeDefinition, OwnedUpgradeView> ownedUpgradeViews = new();
 
     public IReadOnlyDictionary<PlayerAttackDefinition, IPlayerAttackUpgradeable> OwnedAttacks
         => ownedAttacks;
@@ -227,8 +225,6 @@ public class PlayerUpgradeController : MonoBehaviour
                 {
                     if (!upgradeable.TryUpgrade())
                         throw new InvalidOperationException($"{attackDefinition.name} can't be upgraded.");
-
-                    ownedUpgradeViews[attackDefinition].SetLevel(upgradeable.Level, upgradeable.MaxLevel);
                 }
                 else
                 {
@@ -252,12 +248,11 @@ public class PlayerUpgradeController : MonoBehaviour
         IPlayerAttackUpgradeable attack
             = newAttack.GetComponent<IPlayerAttackUpgradeable>();
 
-        OwnedUpgradeView view = attackViews[lastAttackIndex];
+        OwnedUpgradeHUDView view = attackViews[lastAttackIndex];
         ++lastAttackIndex;
-        view.Bind(definition.Icon, attack.Level, attack.MaxLevel);
+        view.Bind(definition.Icon);
 
         ownedAttacks[definition] = attack;
-        ownedUpgradeViews[definition] = view;
     }
 
     private void ApplyPassive(PlayerPassiveDefinition definition)
@@ -269,13 +264,9 @@ public class PlayerUpgradeController : MonoBehaviour
 
         if (currentLevel == 0)
         {
-            ownedUpgradeViews[definition] = passiveViews[lastPassiveIndex];
+            OwnedUpgradeHUDView view = passiveViews[lastPassiveIndex];
             ++lastPassiveIndex;
-            ownedUpgradeViews[definition].Bind(definition.Icon, nextLevel, definition.MaxLevel);
-        }
-        else
-        {
-            ownedUpgradeViews[definition].SetLevel(nextLevel, definition.MaxLevel);
+            view.Bind(definition.Icon);
         }
 
         ownedPassives[definition] = nextLevel;
@@ -319,7 +310,7 @@ public class PlayerUpgradeController : MonoBehaviour
             return false;
         }
 
-        HashSet<OwnedUpgradeView> upgradeViewCheck = new();
+        HashSet<OwnedUpgradeHUDView> upgradeViewCheck = new();
 
         if (attackViews == null)
         {
@@ -333,7 +324,7 @@ public class PlayerUpgradeController : MonoBehaviour
         }
         for (int i = 0; i < attackViews.Length; ++i)
         {
-            OwnedUpgradeView attackView = attackViews[i];
+            OwnedUpgradeHUDView attackView = attackViews[i];
 
             if (attackView == null)
             {
@@ -365,7 +356,7 @@ public class PlayerUpgradeController : MonoBehaviour
         }
         for (int i = 0; i < passiveViews.Length; ++i)
         {
-            OwnedUpgradeView passiveView = passiveViews[i];
+            OwnedUpgradeHUDView passiveView = passiveViews[i];
 
             if (passiveView == null)
             {

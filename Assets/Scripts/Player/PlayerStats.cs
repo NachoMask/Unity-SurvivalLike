@@ -37,6 +37,16 @@ public class PlayerStats : MonoBehaviour
     private float expBonus = 0f;
     private float invulnerabilityTimeBonus = 0f;
 
+    public float MaxHpBase => maxHpBase;
+    public float MaxHpBonus => maxHpBonus;
+    public float MoveSpeedBonus => moveSpeedBonus;
+    public float AttackBonus => attackBonus;
+    public float ProjectileSpeedBonus => projectileSpeedBonus;
+    public float ActiveDurationBonus => activeDurationBonus;
+    public float AttackRangeBonus => attackRangeBonus;
+    public float CooldownReductionBonus => cooldownReductionBonus;
+    public float ExpBonus => expBonus;
+
     private bool isLevelUpPending;
 
     private float recoveryElapsedTime;
