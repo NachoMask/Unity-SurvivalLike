@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e085689b6a2e1b4394c7440cf63739e, type: 3}
-  m_Name: Enemy_Rat
+  m_Name: Enemy_Bat
   m_EditorClassIdentifier: 
-  prefab: {fileID: 8440520602777905871, guid: c607ce33d81fbba41ade4fdd49ca95a1, type: 3}
-  maxHp: 10
-  moveSpeed: 0.4
-  exp: 2
+  prefab: {fileID: 8440520602777905871, guid: ed05d5601ee6575489c36f897f7aefa3, type: 3}
+  maxHp: 5
+  moveSpeed: 0.7
+  exp: 1
   contactDamage: 5

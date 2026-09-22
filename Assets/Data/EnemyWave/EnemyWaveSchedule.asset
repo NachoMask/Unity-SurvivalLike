@@ -16,10 +16,60 @@ MonoBehaviour:
   - startTime: 1
     spawnInterval: 0.5
     entries:
-    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
-      count: 10
-  - startTime: 10
-    spawnInterval: 0.1
+    - enemyData: {fileID: 11400000, guid: b01c1dd3b465ca04aa83f7fd562abd54, type: 2}
+      count: 120
+  - startTime: 30
+    spawnInterval: 1
     entries:
     - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
-      count: 50
+      count: 60
+  - startTime: 60
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 9110a7095b13f3c49ab4cac3527fbb21, type: 2}
+      count: 60
+  - startTime: 90
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 8ee6cb50513db8b41a72d53f043013b5, type: 2}
+      count: 60
+  - startTime: 120
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 485e2f3851216174e9462c95cc7f81f4, type: 2}
+      count: 60
+  - startTime: 150
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: d84fe0cda9dfaae47a43d95e18307073, type: 2}
+      count: 60
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: b01c1dd3b465ca04aa83f7fd562abd54, type: 2}
+      count: 120
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
+      count: 120
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 9110a7095b13f3c49ab4cac3527fbb21, type: 2}
+      count: 120
+  - startTime: 240
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 8ee6cb50513db8b41a72d53f043013b5, type: 2}
+      count: 120
+  - startTime: 240
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 485e2f3851216174e9462c95cc7f81f4, type: 2}
+      count: 120
+  - startTime: 240
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: d84fe0cda9dfaae47a43d95e18307073, type: 2}
+      count: 60

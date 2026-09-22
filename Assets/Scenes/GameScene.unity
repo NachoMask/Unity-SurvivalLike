@@ -48006,7 +48006,7 @@ MonoBehaviour:
   gameOverScreenImage: {fileID: 1776532283}
   gameOverText: {fileID: 1610944194}
   quitButton: {fileID: 589592862}
-  clearTime: 20
+  clearTime: 300
   resultScreen: {fileID: 1024759500}
   gameResultView: {fileID: 1024759504}
   doneButton: {fileID: 1439433274}
