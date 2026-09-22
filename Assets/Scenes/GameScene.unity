@@ -48003,7 +48003,10 @@ MonoBehaviour:
   continueButton: {fileID: 374487827}
   pauseActionRef: {fileID: -8274446530019943140, guid: 7f7df5d809047f04f8f2db0a02e5ebc1, type: 3}
   gameOverScreen: {fileID: 1776532281}
+  gameOverScreenImage: {fileID: 1776532283}
+  gameOverText: {fileID: 1610944194}
   quitButton: {fileID: 589592862}
+  clearTime: 20
   resultScreen: {fileID: 1024759500}
   gameResultView: {fileID: 1024759504}
   doneButton: {fileID: 1439433274}

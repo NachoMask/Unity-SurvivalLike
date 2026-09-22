@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class GameFlowController : MonoBehaviour
 {
@@ -12,7 +13,8 @@ public class GameFlowController : MonoBehaviour
         Playing,
         SelectingUpgrade,
         Paused,
-        GameOver
+        GameOver,
+        GameClear
     }
 
     [Header("# Playing")]
@@ -31,7 +33,10 @@ public class GameFlowController : MonoBehaviour
 
     [Header("# GameOver")]
     [SerializeField] private GameObject gameOverScreen;
+    [SerializeField] private Image gameOverScreenImage;
+    [SerializeField] private TextMeshProUGUI gameOverText;
     [SerializeField] private Button quitButton;
+    [SerializeField, Min(1)] private int clearTime;
 
     [Header("# Results")]
     [SerializeField] private GameObject resultScreen;
@@ -39,6 +44,10 @@ public class GameFlowController : MonoBehaviour
     [SerializeField] private Button doneButton;
 
     public event Action GameOver;
+    public event Action GameClear;
+
+    private static Color GameClearScreenColor = new Color(1, 1, 1, 0.4f);
+    private static Color GameOverScreenColor = new Color(1, 0, 0, 0.4f);
 
     public GameState State { get; private set; } = GameState.Playing;
 
@@ -60,12 +69,16 @@ public class GameFlowController : MonoBehaviour
 
     private void OnEnable()
     {
+        gameTimer.ElapsedSecondsChanged += OnTimeChanged;
         playerStats.HpChanged += OnHpChanged;
         pauseAction.performed += OnPausePerformed;
     }
 
     private void OnDisable()
     {
+        if (gameTimer != null)
+            gameTimer.ElapsedSecondsChanged -= OnTimeChanged;
+
         if (playerStats != null)
             playerStats.HpChanged -= OnHpChanged;
 
@@ -86,6 +99,7 @@ public class GameFlowController : MonoBehaviour
 
             case GameState.SelectingUpgrade:
             case GameState.GameOver:
+            case GameState.GameClear:
                 break;
 
             default:
@@ -96,6 +110,7 @@ public class GameFlowController : MonoBehaviour
     private bool TryBeginPause()
     {
         if (State == GameState.GameOver) return false;
+        if (State == GameState.GameClear) return false;
 
         if (State != GameState.Playing)
             throw new InvalidOperationException($"Can't begin pause in state {State}.");
@@ -110,6 +125,7 @@ public class GameFlowController : MonoBehaviour
     private bool TryEndPause()
     {
         if (State == GameState.GameOver) return false;
+        if (State == GameState.GameClear) return false;
 
         if (State != GameState.Paused)
             throw new InvalidOperationException($"Can't end pause in state {State}.");
@@ -140,6 +156,7 @@ public class GameFlowController : MonoBehaviour
     public bool TryBeginUpgradeSelection()
     {
         if (State == GameState.GameOver) return false;
+        if (State == GameState.GameClear) return false;
 
         if (State != GameState.Playing)
             throw new InvalidOperationException($"Can't begin upgrade selection in state {State}.");
@@ -151,6 +168,7 @@ public class GameFlowController : MonoBehaviour
     public bool TryEndUpgradeSelection()
     {
         if (State == GameState.GameOver) return false;
+        if (State == GameState.GameClear) return false;
 
         if (State != GameState.SelectingUpgrade)
             throw new InvalidOperationException($"Can't end upgrade selection in state {State}.");
@@ -161,12 +179,22 @@ public class GameFlowController : MonoBehaviour
 
     private void OnHpChanged(float currentHp, float maxHp)
     {
-        if (currentHp > 0f || State == GameState.GameOver) return;
+        if (currentHp > 0f ||
+            State == GameState.GameOver || State == GameState.GameClear) return;
 
         SetState(GameState.GameOver);
+        SetScreenState();
 
-        GameOver?.Invoke();
-        gameOverScreen.SetActive(true);
+        EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
+    }
+
+    private void OnTimeChanged(int elapsedSeconds)
+    {
+        if (elapsedSeconds < clearTime ||
+            State == GameState.GameClear || State == GameState.GameOver) return;
+
+        SetState(GameState.GameClear);
+        SetScreenState();
 
         EventSystem.current.SetSelectedGameObject(quitButton.gameObject);
     }
@@ -179,6 +207,31 @@ public class GameFlowController : MonoBehaviour
 
         Time.timeScale = isPlaying ? 1f : 0f;
         playerController.enabled = isPlaying;
+    }
+
+    private void SetScreenState()
+    {
+        HidePauseScreen();
+
+        switch (State)
+        {
+            case GameState.GameOver:
+                gameOverText.text = "Game\nOver";
+                gameOverText.color = Color.white;
+                gameOverScreenImage.color = GameOverScreenColor;
+                GameOver?.Invoke();
+                break;
+            case GameState.GameClear:
+                gameOverText.text = "Game\nClear";
+                gameOverText.color = Color.black;
+                gameOverScreenImage.color = GameClearScreenColor;
+                GameClear?.Invoke();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        gameOverScreen.SetActive(true);
     }
 
     private void ShowPauseScreen()
@@ -270,6 +323,16 @@ public class GameFlowController : MonoBehaviour
             error = $"{nameof(gameOverScreen)} is Invalid.";
             return false;
         }
+        if (gameOverScreenImage == null)
+        {
+            error = $"{nameof(gameOverScreenImage)} is Invalid.";
+            return false;
+        }
+        if (gameOverText == null)
+        {
+            error = $"{nameof(gameOverText)} is Invalid.";
+            return false;
+        }
         if (quitButton == null)
         {
             error = $"{nameof(quitButton)} is Invalid.";
@@ -294,6 +357,12 @@ public class GameFlowController : MonoBehaviour
         if (doneButton == null)
         {
             error = $"{nameof(doneButton)} is Invalid.";
+            return false;
+        }
+
+        if (clearTime < 1)
+        {
+            error = $"{nameof(clearTime)} must be greater than zero.";
             return false;
         }
 

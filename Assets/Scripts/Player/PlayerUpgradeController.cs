@@ -70,6 +70,7 @@ public class PlayerUpgradeController : MonoBehaviour
     {
         playerStats.LevelChanged += BeginUpgradeSelection;
         gameFlowController.GameOver += CancelUpgradeSelection;
+        gameFlowController.GameClear += CancelUpgradeSelection;
     }
 
     private void OnDisable()
@@ -81,6 +82,7 @@ public class PlayerUpgradeController : MonoBehaviour
         if (gameFlowController != null)
         {
             gameFlowController.GameOver -= CancelUpgradeSelection;
+            gameFlowController.GameClear -= CancelUpgradeSelection;
         }
     }
 
