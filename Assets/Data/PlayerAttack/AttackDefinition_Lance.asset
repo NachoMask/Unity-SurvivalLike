@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3e65b30eb1bc474582d710017c3e13a, type: 3}
+  m_Name: AttackDefinition_Lance
+  m_EditorClassIdentifier: 
+  displayName: "\uB79C\uC2A4"
+  description: "\uBC14\uB77C\uBCF4\uB294 \uBC29\uD5A5\uC758 \uC77C\uC815 \uBC94\uC704\uB97C
+    \uACF5\uACA9\uD569\uB2C8\uB2E4."
+  icon: {fileID: -4154210426252197896, guid: ca2a6bb923ea6634d8270b997e642442, type: 3}
+  prefab: {fileID: 3101434571649670118, guid: 0101a90cccda44a4aa3e762864756536, type: 3}

@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3782134578264517641}
-  - component: {fileID: -824010345923689633}
+  - component: {fileID: -1063574289995814556}
   m_Layer: 0
-  m_Name: OrbitingAxeAttack
+  m_Name: LanceAttack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-824010345923689633
+--- !u!114 &-1063574289995814556
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -41,26 +41,29 @@ MonoBehaviour:
   m_GameObject: {fileID: 3101434571649670118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3ff323f467431d4fbd79cd759ef1e16, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f453002fe330ca479d52a51bc91884c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 6375032221412046534, guid: 8ad6bfdeba918e846984524dd64ddda0, type: 3}
-  projectileRotationOffset: 180
+  projectilePrefab: {fileID: 6375032221412046534, guid: 10f14240ce985f248a3a32009250f252, type: 3}
   damage: 10
-  cooldownDuration: 2
+  cooldownDuration: 1.5
   projectileCount: 1
-  orbitAngularSpeed: 180
-  attackRange: 1
-  knockbackForce: 5
-  activeDuration: 4
+  fireInterval: 0.3
+  projectileSpeed: 10
+  attackRange: 2
+  knockbackForce: 15
+  activeDuration: 0.2
   rehitInterval: 1
+  defaultCapacity: 10
+  maxPoolSize: 20
   upgradeLevels:
   - description: 
     damageBonus: 0
     cooldownReduction: 0
     projectileCountBonus: 0
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
@@ -68,62 +71,69 @@ MonoBehaviour:
     damageBonus: 0
     cooldownReduction: 0
     projectileCountBonus: 1
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
-  - description: "\uD68C\uC804 \uC18D\uB3C4 +30%\n\uACF5\uACA9 \uBC94\uC704 +25%"
-    damageBonus: 0
+  - description: "\uD53C\uD574\uB7C9 +10"
+    damageBonus: 10
     cooldownReduction: 0
     projectileCountBonus: 0
-    orbitAngularSpeedMultiplier: 0.3
-    attackRangeMultiplier: 0.25
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
-  - description: "\uD53C\uD574\uB7C9 +5\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+  - description: "\uD53C\uD574\uB7C9 +5\n\uACF5\uACA9 \uBC94\uC704 +10%"
     damageBonus: 5
     cooldownReduction: 0
     projectileCountBonus: 0
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0.1
     knockbackForceBonus: 0
-    activeDurationBonus: 0.5
+    activeDurationBonus: 0
     rehitIntervalReduction: 0
   - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
     damageBonus: 0
     cooldownReduction: 0
     projectileCountBonus: 1
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
-  - description: "\uD68C\uC804 \uC18D\uB3C4 +30%\n\uACF5\uACA9 \uBC94\uC704 +25%"
-    damageBonus: 0
-    cooldownReduction: 0
-    projectileCountBonus: 0
-    orbitAngularSpeedMultiplier: 0.3
-    attackRangeMultiplier: 0.25
-    knockbackForceBonus: 0
-    activeDurationBonus: 0
-    rehitIntervalReduction: 0
-  - description: "\uD53C\uD574\uB7C9 +5\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+  - description: "\uD53C\uD574\uB7C9 +5\n\uACF5\uACA9 \uBC94\uC704 +10%"
     damageBonus: 5
     cooldownReduction: 0
     projectileCountBonus: 0
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0.1
     knockbackForceBonus: 0
-    activeDurationBonus: 0.5
+    activeDurationBonus: 0
+    rehitIntervalReduction: 0
+  - description: "\uD53C\uD574\uB7C9 +10"
+    damageBonus: 10
+    cooldownReduction: 0
+    projectileCountBonus: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
+    knockbackForceBonus: 0
+    activeDurationBonus: 0
     rehitIntervalReduction: 0
   - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
     damageBonus: 0
     cooldownReduction: 0
     projectileCountBonus: 1
-    orbitAngularSpeedMultiplier: 0
-    attackRangeMultiplier: 0
+    fireIntervalReduction: 0
+    projectileSpeedMultiplier: 0
+    attackRangeBonus: 0
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0

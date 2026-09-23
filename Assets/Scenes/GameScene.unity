@@ -20303,6 +20303,7 @@ MonoBehaviour:
   availableUpgradeDefinitions:
   - {fileID: 11400000, guid: 8cc0e5ed420ee7044b3c5f2d8e16a3db, type: 2}
   - {fileID: 11400000, guid: 14e231556f6f2c3419aa1ba068e7a9cb, type: 2}
+  - {fileID: 11400000, guid: 865644f9c73592f4dae0289ec27ac469, type: 2}
   - {fileID: 11400000, guid: e0e94c568ca25f04fa5886d1bf0a1e83, type: 2}
   - {fileID: 11400000, guid: 06080ab83041d0e4bad6c8a27255a0a6, type: 2}
   - {fileID: 11400000, guid: 1d06011e03bf94645b9ae8b23dbca4b3, type: 2}
@@ -20315,7 +20316,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: faa68cd9c014fc042b77ed1a8a68ce5c, type: 2}
   - {fileID: 11400000, guid: 96b6a2d6c96b230409170103a36bd3ab, type: 2}
   startingAttackDefinitions:
-  - {fileID: 11400000, guid: 14e231556f6f2c3419aa1ba068e7a9cb, type: 2}
+  - {fileID: 11400000, guid: 865644f9c73592f4dae0289ec27ac469, type: 2}
 --- !u!50 &930712316
 Rigidbody2D:
   serializedVersion: 5

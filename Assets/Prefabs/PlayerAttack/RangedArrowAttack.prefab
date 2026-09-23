@@ -74,15 +74,15 @@ MonoBehaviour:
     projectileSizeMultiplierBonus: 0
     knockbackForceBonus: 0
     penetrationCountBonus: 0
-  - description: "\uCFE8\uD0C0\uC784 -0.2\uCD08"
+  - description: "\uAD00\uD1B5 \uC218 +1"
     damageBonus: 0
-    cooldownReduction: 0.2
+    cooldownReduction: 0
     projectileCountBonus: 0
     fireIntervalReduction: 0
     projectileSpeedMultiplier: 0
     projectileSizeMultiplierBonus: 0
     knockbackForceBonus: 0
-    penetrationCountBonus: 0
+    penetrationCountBonus: 1
   - description: "\uD22C\uC0AC\uCCB4 \uC218 +1"
     damageBonus: 0
     cooldownReduction: 0

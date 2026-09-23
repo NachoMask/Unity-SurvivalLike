@@ -151,7 +151,7 @@ public class PlayerStats : MonoBehaviour
         currentExp -= maxExp;
 
         ++level;
-        maxExp *= 1.5f;
+        maxExp += level * 2f;
 
         isLevelUpPending = true;
         LevelChanged?.Invoke(level);
