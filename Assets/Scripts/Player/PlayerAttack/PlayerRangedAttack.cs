@@ -190,6 +190,8 @@ public class PlayerRangedAttack : MonoBehaviour, IPlayerAttackUpgradeable
         else
             direction = direction.normalized;
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Arrow);
+
         PlayerAttack projectile = pool.Get();
         projectile.transform.rotation = Quaternion.FromToRotation(Vector2.up, direction);
         projectile.GetComponent<Rigidbody2D>().linearVelocity = direction * FinalProjectileSpeed;

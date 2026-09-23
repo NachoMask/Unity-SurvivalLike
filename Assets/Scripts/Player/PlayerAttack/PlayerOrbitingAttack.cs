@@ -164,6 +164,8 @@ public class PlayerOrbitingAttack : MonoBehaviour, IPlayerAttackUpgradeable
             projectile.gameObject.SetActive(true);
         }
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Axe);
+
         PlaceProjectiles();
     }
 

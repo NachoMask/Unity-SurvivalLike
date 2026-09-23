@@ -67,6 +67,11 @@ public class GameFlowController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    private void Start()
+    {
+        AudioManager.instance.PlayBgm(true);
+    }
+
     private void OnEnable()
     {
         gameTimer.ElapsedSecondsChanged += OnTimeChanged;
@@ -173,6 +178,7 @@ public class GameFlowController : MonoBehaviour
         if (State != GameState.SelectingUpgrade)
             throw new InvalidOperationException($"Can't end upgrade selection in state {State}.");
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
         SetState(GameState.Playing);
         return true;
     }
@@ -182,6 +188,7 @@ public class GameFlowController : MonoBehaviour
         if (currentHp > 0f ||
             State == GameState.GameOver || State == GameState.GameClear) return;
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.GameOver);
         SetState(GameState.GameOver);
         SetScreenState();
 
@@ -193,6 +200,7 @@ public class GameFlowController : MonoBehaviour
         if (elapsedSeconds < clearTime ||
             State == GameState.GameClear || State == GameState.GameOver) return;
 
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.GameClear);
         SetState(GameState.GameClear);
         SetScreenState();
 
@@ -232,6 +240,7 @@ public class GameFlowController : MonoBehaviour
         }
 
         gameOverScreen.SetActive(true);
+        AudioManager.instance.PlayBgm(false);
     }
 
     private void ShowPauseScreen()
@@ -250,6 +259,8 @@ public class GameFlowController : MonoBehaviour
 
     public void ShowResults()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
+
         gameOverScreen.SetActive(false);
 
         gameResultView.Show(gameTimer.ElapsedSeconds, playerStats.Level, playerStats.KillCount,
@@ -261,6 +272,8 @@ public class GameFlowController : MonoBehaviour
 
     public void EnterTitle()
     {
+        AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
+
         SceneManager.LoadScene("TitleScene");
     }
 
