@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PauseView : MonoBehaviour
+public class PlayerInfoView : MonoBehaviour
 {
     [SerializeField] private StatView[] statViews;
     [SerializeField] private OwnedUpgradeView[] attackViews;

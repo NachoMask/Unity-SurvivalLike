@@ -25,7 +25,7 @@ public class GameFlowController : MonoBehaviour
 
     [Header("# Pause")]
     [SerializeField] private GameObject pauseScreen;
-    [SerializeField] private PauseView pauseView;
+    [SerializeField] private PlayerInfoView playerInfoView;
     [SerializeField] private Button continueButton;
     [SerializeField] private InputActionReference pauseActionRef;
 
@@ -153,6 +153,8 @@ public class GameFlowController : MonoBehaviour
     {
         if (State != GameState.Paused) return;
 
+        AudioManager.instance.PlayBgm(false);
+
         HidePauseScreen();
         SetState(GameState.GameOver);
         ShowResults();
@@ -166,6 +168,8 @@ public class GameFlowController : MonoBehaviour
         if (State != GameState.Playing)
             throw new InvalidOperationException($"Can't begin upgrade selection in state {State}.");
 
+        ShowPlayerInfoScreen();
+
         SetState(GameState.SelectingUpgrade);
         return true;
     }
@@ -177,6 +181,8 @@ public class GameFlowController : MonoBehaviour
 
         if (State != GameState.SelectingUpgrade)
             throw new InvalidOperationException($"Can't end upgrade selection in state {State}.");
+
+        HidePlayerInfoScreen();
 
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
         SetState(GameState.Playing);
@@ -245,7 +251,7 @@ public class GameFlowController : MonoBehaviour
 
     private void ShowPauseScreen()
     {
-        pauseView.Show(playerStats, playerUpgradeController.OwnedAttacks, playerUpgradeController.OwnedPassives);
+        ShowPlayerInfoScreen();
 
         pauseScreen.SetActive(true);
         EventSystem.current.SetSelectedGameObject(continueButton.gameObject);
@@ -253,8 +259,21 @@ public class GameFlowController : MonoBehaviour
 
     private void HidePauseScreen()
     {
+        HidePlayerInfoScreen();
+
         EventSystem.current.SetSelectedGameObject(null);
         pauseScreen.SetActive(false);
+    }
+
+    private void ShowPlayerInfoScreen()
+    {
+        playerInfoView.Show(playerStats, playerUpgradeController.OwnedAttacks, playerUpgradeController.OwnedPassives);
+        playerInfoView.gameObject.SetActive(true);
+    }
+
+    private void HidePlayerInfoScreen()
+    {
+        playerInfoView.gameObject.SetActive(false);
     }
 
     public void ShowResults()
@@ -305,14 +324,14 @@ public class GameFlowController : MonoBehaviour
             error = $"{nameof(pauseScreen)} is Invalid.";
             return false;
         }
-        if (pauseView == null)
+        if (playerInfoView == null)
         {
-            error = $"{nameof(pauseView)} is Invalid.";
+            error = $"{nameof(playerInfoView)} is Invalid.";
             return false;
         }
-        if (!pauseView.TryValidateSettings(out string pauseViewError))
+        if (!playerInfoView.TryValidateSettings(out string pauseViewError))
         {
-            error = $"{nameof(pauseView)}'s {pauseViewError}";
+            error = $"{nameof(playerInfoView)}'s {pauseViewError}";
             return false;
         }
         if (continueButton == null)
