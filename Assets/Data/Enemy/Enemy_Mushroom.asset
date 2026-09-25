@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e085689b6a2e1b4394c7440cf63739e, type: 3}
+  m_Name: Enemy_Mushroom
+  m_EditorClassIdentifier: 
+  prefab: {fileID: 8440520602777905871, guid: 453bd6dfb6b9b2240886cef1289e1ccd, type: 3}
+  maxHp: 40
+  moveSpeed: 0.4
+  exp: 16
+  contactDamage: 14

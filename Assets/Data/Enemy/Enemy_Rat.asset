@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefab: {fileID: 8440520602777905871, guid: c607ce33d81fbba41ade4fdd49ca95a1, type: 3}
   maxHp: 10
-  moveSpeed: 0.3
-  exp: 1
-  contactDamage: 1
+  moveSpeed: 0.4
+  exp: 2
+  contactDamage: 5

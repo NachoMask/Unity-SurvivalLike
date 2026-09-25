@@ -16,10 +16,65 @@ MonoBehaviour:
   - startTime: 1
     spawnInterval: 0.5
     entries:
-    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
-      count: 10
-  - startTime: 10
-    spawnInterval: 0.1
+    - enemyData: {fileID: 11400000, guid: 8e020f9565f769649b1d3dbbb3832c7d, type: 2}
+      count: 120
+  - startTime: 30
+    spawnInterval: 1
     entries:
     - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
-      count: 50
+      count: 60
+  - startTime: 60
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 1fdcfd70da7ea4e4f9e3dba68a760bd5, type: 2}
+      count: 60
+  - startTime: 90
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 97cd0c855c5cdf340993369609f53930, type: 2}
+      count: 120
+  - startTime: 120
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 53f4f07c5aa247149abf62635415cff4, type: 2}
+      count: 60
+  - startTime: 150
+    spawnInterval: 1
+    entries:
+    - enemyData: {fileID: 11400000, guid: c5ddfbe9bbb01bd458f4fd071facb992, type: 2}
+      count: 60
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 8e020f9565f769649b1d3dbbb3832c7d, type: 2}
+      count: 120
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 7e0dcb3cfad213b4baf83c32fbc0e4ac, type: 2}
+      count: 120
+  - startTime: 180
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 1fdcfd70da7ea4e4f9e3dba68a760bd5, type: 2}
+      count: 120
+  - startTime: 210
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 1fdcfd70da7ea4e4f9e3dba68a760bd5, type: 2}
+      count: 120
+  - startTime: 240
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: 53f4f07c5aa247149abf62635415cff4, type: 2}
+      count: 120
+  - startTime: 240
+    spawnInterval: 0.5
+    entries:
+    - enemyData: {fileID: 11400000, guid: c5ddfbe9bbb01bd458f4fd071facb992, type: 2}
+      count: 120
+  - startTime: 270
+    spawnInterval: 0.1
+    entries:
+    - enemyData: {fileID: 11400000, guid: 8e020f9565f769649b1d3dbbb3832c7d, type: 2}
+      count: 150
