@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: -3411705933118503655
     second: Attack_Icon_1
+  - first:
+      213: -4154210426252197896
+    second: Attack_Icon_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -159,11 +162,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: Attack_Icon_2
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8ff730590a74956c0800000000000000
+      internalID: -4154210426252197896
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 735a93f3a8f73aa4caf660803b9c55fb
+    spriteID: a96f7852fef9bbf4c87238a7cca12549
     internalID: 0
     vertices: []
     indices: 
@@ -175,6 +200,7 @@ TextureImporter:
     nameFileIdTable:
       Attack_Icon_0: 8202158508323460333
       Attack_Icon_1: -3411705933118503655
+      Attack_Icon_2: -4154210426252197896
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
