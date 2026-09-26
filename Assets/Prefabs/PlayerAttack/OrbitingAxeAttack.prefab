@@ -82,8 +82,8 @@ MonoBehaviour:
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
-  - description: "\uD53C\uD574\uB7C9 +10\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
-    damageBonus: 10
+  - description: "\uD53C\uD574\uB7C9 +5\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+    damageBonus: 5
     cooldownReduction: 0
     projectileCountBonus: 0
     orbitAngularSpeedMultiplier: 0
@@ -109,8 +109,8 @@ MonoBehaviour:
     knockbackForceBonus: 0
     activeDurationBonus: 0
     rehitIntervalReduction: 0
-  - description: "\uD53C\uD574\uB7C9 +10\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
-    damageBonus: 10
+  - description: "\uD53C\uD574\uB7C9 +5\n\uC9C0\uC18D\uC2DC\uAC04 +0.5\uCD08"
+    damageBonus: 5
     cooldownReduction: 0
     projectileCountBonus: 0
     orbitAngularSpeedMultiplier: 0

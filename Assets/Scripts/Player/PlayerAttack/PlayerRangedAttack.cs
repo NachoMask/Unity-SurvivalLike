@@ -186,7 +186,7 @@ public class PlayerRangedAttack : MonoBehaviour, IPlayerAttackUpgradeable
     private void FireProjectile(Vector2 direction)
     {
         if (direction == Vector2.zero)
-            direction = Vector2.up;
+            direction = Vector2.right;
         else
             direction = direction.normalized;
 
