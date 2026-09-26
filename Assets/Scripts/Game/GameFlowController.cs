@@ -67,6 +67,11 @@ public class GameFlowController : MonoBehaviour
         Time.timeScale = 1f;
     }
 
+    private void Start()
+    {
+        AudioManager.Instance?.PlayBgm();
+    }
+
     private void OnEnable()
     {
         gameTimer.ElapsedSecondsChanged += OnTimeChanged;
@@ -141,12 +146,16 @@ public class GameFlowController : MonoBehaviour
     {
         if (State != GameState.Paused) return;
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
+
         TryEndPause();
     }
 
     public void ExitPausedGame()
     {
         if (State != GameState.Paused) return;
+
+        AudioManager.Instance?.StopBgm();
 
         HidePauseScreen();
         SetState(GameState.GameOver);
@@ -175,6 +184,8 @@ public class GameFlowController : MonoBehaviour
         if (State != GameState.SelectingUpgrade)
             throw new InvalidOperationException($"Can't end upgrade selection in state {State}.");
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
+
         HidePlayerInfoScreen();
 
         SetState(GameState.Playing);
@@ -186,6 +197,8 @@ public class GameFlowController : MonoBehaviour
         if (currentHp > 0f ||
             State == GameState.GameOver || State == GameState.GameClear) return;
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.GameOver);
+
         SetState(GameState.GameOver);
         SetScreenState();
 
@@ -196,6 +209,8 @@ public class GameFlowController : MonoBehaviour
     {
         if (elapsedSeconds < clearTime ||
             State == GameState.GameClear || State == GameState.GameOver) return;
+
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.GameClear);
 
         SetState(GameState.GameClear);
         SetScreenState();
@@ -236,6 +251,7 @@ public class GameFlowController : MonoBehaviour
         }
 
         gameOverScreen.SetActive(true);
+        AudioManager.Instance?.StopBgm();
     }
 
     private void ShowPauseScreen()
@@ -267,6 +283,8 @@ public class GameFlowController : MonoBehaviour
 
     public void ShowResults()
     {
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
+
         gameOverScreen.SetActive(false);
 
         gameResultView.Show(gameTimer.ElapsedSeconds, playerStats.Level, playerStats.KillCount,
@@ -278,6 +296,8 @@ public class GameFlowController : MonoBehaviour
 
     public void EnterTitle()
     {
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
+
         SceneManager.LoadScene("TitleScene");
     }
 

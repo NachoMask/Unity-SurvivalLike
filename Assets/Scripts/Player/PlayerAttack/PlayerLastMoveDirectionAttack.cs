@@ -187,6 +187,8 @@ public class PlayerLastMoveDirectionAttack : MonoBehaviour, IPlayerAttackUpgrade
         Vector2 outwardEnd = start + direction * FinalAttackRange;
         var fixedUpdate = new WaitForFixedUpdate();
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Lance);
+
         while (true)
         {
             float step = FinalProjectileSpeed * Time.fixedDeltaTime;

@@ -127,6 +127,8 @@ public class EnemyCharacter : MonoBehaviour
             throw new System.ArgumentOutOfRangeException(nameof(damage));
         }
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.HitEnemy);
+
         damageTextSpawner.Spawn(damage, transform.position);
 
         HitFlash();

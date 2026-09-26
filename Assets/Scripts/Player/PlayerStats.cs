@@ -107,6 +107,7 @@ public class PlayerStats : MonoBehaviour
 
         float finalDamage = (float)Mathf.Max(1f, damage - Defense);
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.HitPlayer);
         SetCurrentHp(CurrentHp - finalDamage);
     }
 
@@ -153,6 +154,7 @@ public class PlayerStats : MonoBehaviour
         ++level;
         maxExp += level * 2f;
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.LevelUp);
         isLevelUpPending = true;
         LevelChanged?.Invoke(level);
     }

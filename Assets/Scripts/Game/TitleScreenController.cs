@@ -69,12 +69,15 @@ public class TitleScreenController : MonoBehaviour
 
         yield return null;
 
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
+
         uiInputModule.enabled = true;
         EventSystem.current.SetSelectedGameObject(startButton.gameObject);
     }
 
     public void StartGame()
     {
+        AudioManager.Instance?.PlaySfx(AudioManager.Sfx.Select);
         SceneManager.LoadScene("GameScene");
     }
 
